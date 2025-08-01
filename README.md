@@ -50,4 +50,74 @@ Join our community of developers creating universal apps.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
 # ToDoApp-HEPT
-React Native Expo
+
+This is a React Native Expo ToDo application project.
+
+## Dependencies Installed
+
+### Core Dependencies
+
+- **expo** - Expo platform for React Native development
+- **expo-router** - File-based routing for Expo
+- **react-native-safe-area-context** - Safe area handling
+- **@expo/vector-icons** - Icon library (includes FontAwesome)
+- **react-native-dropdown-picker** - Dropdown/picker component for forms
+- **react-native-reanimated** - High-performance animations library
+- **react-native-gesture-handler** - Touch and gesture handling
+- **react-native-screens** - Native screen optimization
+
+### Development Dependencies
+
+- **babel-plugin-module-resolver** - Babel plugin for path aliases and module resolution
+
+### Configuration Notes
+
+- **Path Aliases**: Configured `@components/*`, `@screens/*`, `@utils/*` in both:
+  - `babel.config.js` (for runtime resolution)
+  - `tsconfig.json` (for TypeScript intellisense)
+- **Animations**: react-native-reanimated configured for smooth animations
+- **Gestures**: react-native-gesture-handler for touch interactions
+- **Dropdown**: react-native-dropdown-picker for form selections
+
+## Project Structure
+
+```
+ToDoApp/
+├── app/
+│   └── index.tsx          # Main app entry point
+├── components/
+│   └── Header.tsx         # Header component with FontAwesome icon
+├── babel.config.js        # Babel configuration with module resolver
+├── tsconfig.json         # TypeScript configuration with path aliases
+└── package.json
+```
+
+## Get started
+
+1. Install dependencies
+
+   ```bash
+   npm install
+   ```
+
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
+
+## Development Notes
+
+- Using **FontAwesome** icons from `@expo/vector-icons`
+- Header component with check-square-o icon and custom blue theme (#456882)
+- Configured custom path aliases for cleaner imports
+- **react-native-dropdown-picker** ready for form components
+- **Reanimated v3** + **Gesture Handler** for smooth interactions
+
+## Recent Installations
+
+- **2025-08-01**: Added react-native-dropdown-picker, react-native-reanimated, react-native-gesture-handler, react-native-screens
+
+---
+
+*Last updated: August 1, 2025*

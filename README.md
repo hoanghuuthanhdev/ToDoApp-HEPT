@@ -1,123 +1,315 @@
-# Welcome to your Expo app 👋
+# 📝 ToDoApp - React Native Task Manager
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, feature-rich Todo application built with React Native and TypeScript, featuring advanced gesture handling, smooth animations, and intuitive user interactions.
 
-## Get started
+## ✨ Features
 
-1. Install dependencies
+### Core Functionality
+- ✅ **Add/Edit/Delete Tasks** - Complete task management
+- 🔄 **Toggle Task Status** - Mark tasks as completed/incomplete with checkbox
+- 👆 **Long Press Gestures** - Long press to reveal delete actions
+- 🎯 **Filter Tasks** - Filter by All, Expired, Completed via dropdown
+- 📱 **Responsive Design** - Works on all screen sizes
+- 🔄 **Real-time State** - Instant UI updates
 
-   ```bash
-   npm install
-   ```
+### Advanced Interactions
+- 🌊 **Smooth Animations** - Shake effects and smooth transitions  
+- 👆 **Long Press Detection** - 800ms long press triggers delete mode
+- 🎭 **Dynamic UI States** - Visual feedback for all interactions
+- ⚡ **Touch Feedback** - Proper touch handling with gesture detection
+- 🎨 **Animated Components** - Reanimated 3 for smooth performance
 
-2. Start the app
+### UI/UX Features
+- 🎨 **Modern Header** - Dropdown filters and theme menu with icons
+- 🌊 **Gesture Handling** - Native gesture detection for better UX
+- 🎭 **Safe Area Support** - Proper handling of notches and home indicators
+- 💫 **Shadow Effects** - Elevated UI components with proper shadows
+- ⚡ **Visual States** - Strike-through for completed tasks
 
-   ```bash
-   npx expo start
-   ```
+## 🏗️ Architecture
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+### Project Structure
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-
-# ToDoApp-HEPT
-
-This is a React Native Expo ToDo application project.
-
-## Dependencies Installed
-
-### Core Dependencies
-
-- **expo** - Expo platform for React Native development
-- **expo-router** - File-based routing for Expo
-- **react-native-safe-area-context** - Safe area handling
-- **@expo/vector-icons** - Icon library (includes FontAwesome)
-- **react-native-dropdown-picker** - Dropdown/picker component for forms
-- **react-native-reanimated** - High-performance animations library
-- **react-native-gesture-handler** - Touch and gesture handling
-- **react-native-screens** - Native screen optimization
-
-### Development Dependencies
-
-- **babel-plugin-module-resolver** - Babel plugin for path aliases and module resolution
-
-### Configuration Notes
-
-- **Path Aliases**: Configured `@components/*`, `@screens/*`, `@utils/*` in both:
-  - `babel.config.js` (for runtime resolution)
-  - `tsconfig.json` (for TypeScript intellisense)
-- **Animations**: react-native-reanimated configured for smooth animations
-- **Gestures**: react-native-gesture-handler for touch interactions
-- **Dropdown**: react-native-dropdown-picker for form selections
-
-## Project Structure
-
-```
-ToDoApp/
+d:\ReactNative\ToDoApp\
 ├── app/
-│   └── index.tsx          # Main app entry point
+│   └── index.tsx                 # Main app entry point with GestureHandler
 ├── components/
-│   └── Header.tsx         # Header component with FontAwesome icon
-├── babel.config.js        # Babel configuration with module resolver
-├── tsconfig.json         # TypeScript configuration with path aliases
-└── package.json
+│   ├── Header.tsx               # Header with dropdown & theme menu
+│   ├── TaskItem.tsx             # Main task component with animations
+│   ├── TaskItemHide.tsx         # Hidden swipe actions (if used)
+│   └── TaskItemSwip.tsx         # SwipeListView wrapper (if used)
+├── constants/
+│   └── strings.ts               # App text constants
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
-## Get started
+### Component Hierarchy
+```
+App (GestureHandlerRootView)
+├── SafeAreaView
+    ├── Header 
+    │   ├── Filter Dropdown (react-native-dropdown-picker)
+    │   └── Theme Menu (dots-three-vertical)
+    └── TaskItem[] (with long press gestures)
+        ├── Checkbox (expo-checkbox)
+        ├── Task Text
+        └── Delete Button (conditional)
+```
 
-1. Install dependencies
+## 🔧 Tech Stack
 
+### Core Technologies
+- **React Native** - Cross-platform mobile framework
+- **TypeScript** - Type-safe development with strict typing
+- **Expo** - Development platform and managed workflow
+
+### Animation & Gesture Libraries
+- **react-native-reanimated@3.x** - High-performance animations
+  - `useSharedValue` for shared animation values
+  - `useAnimatedStyle` for animated styling
+  - `withSequence`, `withTiming` for complex animations
+- **react-native-gesture-handler** - Native gesture recognition
+  - `Gesture.LongPress()` for long press detection
+  - `GestureDetector` for gesture handling
+  - `runOnJS` for thread-safe state updates
+
+### UI Components & Icons
+- **react-native-dropdown-picker@5.4.6** - Advanced dropdown component
+  - Custom styling with `dropDownContainerStyle`
+  - Tick icons and custom text styling
+  - Z-index management for overlays
+- **expo-checkbox** - Native checkbox implementation
+  - Cross-platform consistency
+  - Custom color theming
+  - Smooth toggle animations
+- **@expo/vector-icons** - Comprehensive icon library
+  - **FontAwesome** icons for UI elements
+  - **Entypo** icons for menu actions
+  - **AntDesign** icons for delete actions
+
+### Layout & Safety
+- **react-native-safe-area-context** - Safe area handling
+  - `SafeAreaView` for notch avoidance
+  - Automatic inset management
+  - Cross-platform compatibility
+
+### Development Tools
+- **TypeScript** - Static type checking with interfaces
+- **ESLint** - Code linting and best practices
+- **Metro** - React Native bundler
+
+## 🚀 Getting Started
+
+### Prerequisites
+```bash
+Node.js (v18 or higher)
+npm or yarn
+Expo CLI
+iOS Simulator / Android Emulator
+```
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd ToDoApp
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. **Install required libraries**
    ```bash
-   npx expo start
+   npx expo install react-native-reanimated
+   npx expo install react-native-gesture-handler
+   npx expo install react-native-safe-area-context
+   npm install react-native-dropdown-picker@5.4.6
+   npx expo install expo-checkbox
+   npx expo install @expo/vector-icons
    ```
 
-## Development Notes
+4. **Start the development server**
+   ```bash
+   npx expo start -c
+   ```
 
-- Using **FontAwesome** icons from `@expo/vector-icons`
-- Header component with check-square-o icon and custom blue theme (#456882)
-- Configured custom path aliases for cleaner imports
-- **react-native-dropdown-picker** ready for form components
-- **Reanimated v3** + **Gesture Handler** for smooth interactions
+5. **Run on device/simulator**
+   - Press `i` for iOS Simulator
+   - Press `a` for Android Emulator
+   - Scan QR code with Expo Go app
 
-## Recent Installations
+## 📱 Component Details
 
-- **2025-08-01**: Added react-native-dropdown-picker, react-native-reanimated, react-native-gesture-handler, react-native-screens
+### TaskItem Component Features
+```tsx
+<TaskItem
+    id="unique-id"
+    title="Task description"
+    completed={false}
+    onToggle={(id) => handleToggle(id)}
+    onPress={(id) => handlePress(id)}
+    onDelete={(id) => handleDelete(id)}
+/>
+```
 
----
+**Interaction Flow:**
+1. **Normal Tap** → Calls `onPress` for task details
+2. **Checkbox Tap** → Calls `onToggle` for completion state
+3. **Long Press (800ms)** → Triggers shake animation + shows delete button
+4. **Delete Button Tap** → Calls `onDelete` and hides button
 
-*Last updated: August 1, 2025*
+### Header Component Features
+```tsx
+<Header />
+```
+
+**Features:**
+- **Left Icon** - App logo/brand icon
+- **Center Dropdown** - Task filter with chevron animation
+- **Right Menu** - Theme options with dots-three-vertical icon
+
+### Animation System
+```tsx
+// Shake Animation on Long Press
+shake.value = withSequence(
+    withTiming(-10, { duration: 50 }),
+    withTiming(10, { duration: 50 }),
+    withTiming(-10, { duration: 50 }),
+    withTiming(10, { duration: 50 }),
+    withTiming(-5, { duration: 50 }),
+    withTiming(5, { duration: 50 }),
+    withTiming(0, { duration: 50 })
+);
+```
+
+## 🎯 Library Functions & Usage
+
+### react-native-reanimated
+```tsx
+const shake = useSharedValue(0);
+const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: shake.value }],
+}));
+```
+**Purpose:** Smooth 60fps animations with worklet support
+
+### react-native-gesture-handler
+```tsx
+const longPressGesture = Gesture.LongPress()
+    .minDuration(800)
+    .onStart(() => {
+        runOnJS(showDeleteButton)();
+    });
+```
+**Purpose:** Native gesture recognition for better performance
+
+### expo-checkbox
+```tsx
+<Checkbox
+    value={isChecked}
+    onValueChange={handleToggle}
+    color={isChecked ? '#4CAF50' : undefined}
+/>
+```
+**Purpose:** Native checkbox with platform-specific styling
+
+### react-native-dropdown-picker
+```tsx
+<DropDownPicker
+    open={open}
+    value={value}
+    items={items}
+    showTickIcon={true}
+    tickIconStyle={{ tintColor: '#FFD700' }}
+/>
+```
+**Purpose:** Advanced dropdown with custom styling and animations
+
+## 🎨 Props & Interfaces
+
+### TaskItemProps
+```typescript
+interface TaskItemProps {
+    id: string;                    // Unique identifier
+    title: string;                 // Task description
+    completed?: boolean;           // Completion state
+    onToggle?: (id: string) => void;   // Checkbox handler
+    onPress?: (id: string) => void;    // Task press handler
+    onDelete?: (id: string) => void;   // Delete handler
+}
+```
+
+### Animation Values
+```typescript
+// Reanimated shared values
+const shake = useSharedValue(0);           // Shake animation
+const borderColor = useSharedValue(0);     // Color transitions
+const rotation = useSharedValue(0);        // Rotation effects
+```
+
+## 🔮 Current Implementation Status
+
+### ✅ Implemented Features
+- [x] **Core Components** - TaskItem with full interaction
+- [x] **Gesture Handling** - Long press with shake animation
+- [x] **Header Navigation** - Dropdown filters and theme menu
+- [x] **TypeScript Integration** - Full type safety
+- [x] **Animation System** - Reanimated 3 implementation
+- [x] **Safe Area Handling** - Proper notch/indicator support
+- [x] **Icon System** - FontAwesome and Entypo integration
+
+### 🚧 In Progress
+- [ ] **Data Persistence** - AsyncStorage integration
+- [ ] **Swipe Gestures** - SwipeListView integration
+- [ ] **Theme System** - Complete dark/light mode
+- [ ] **State Management** - Context or Redux implementation
+
+### ⏳ Planned Features
+- [ ] **Push Notifications** - Task reminders
+- [ ] **Categories/Tags** - Task organization
+- [ ] **Due Dates** - Deadline management
+- [ ] **Search Functionality** - Task search
+- [ ] **Cloud Sync** - Multi-device support
+- [ ] **Unit Tests** - Jest + Testing Library
+- [ ] **E2E Tests** - Detox integration
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Follow TypeScript best practices
+4. Test on both iOS and Android
+5. Commit changes (`git commit -m 'Add amazing feature'`)
+6. Push to branch (`git push origin feature/amazing-feature`)
+7. Open Pull Request
+
+## 📋 Development Guidelines
+
+### Animation Performance
+- Use `useSharedValue` for animated values
+- Implement animations on UI thread with worklets
+- Use `runOnJS` sparingly for thread safety
+
+### Gesture Handling
+- Wrap components with `GestureDetector`
+- Use proper `minDuration` for long press (800ms+)
+- Handle gesture conflicts properly
+
+### TypeScript Best Practices
+- Define clear interfaces for all props
+- Use optional props with default values
+- Implement proper type guards where needed
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👨‍💻 Author
+TopuriraDev
+
+🔄 **Last Updated:** Featuring React Native Reanimated 3, Gesture Handler, and modern animation patterns

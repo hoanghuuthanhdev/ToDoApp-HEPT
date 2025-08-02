@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'relative',
         height: 80,
+        zIndex: 1000
 
     },
     iconSection: {

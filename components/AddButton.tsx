@@ -1,3 +1,4 @@
+import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
@@ -13,17 +14,32 @@ const { width } = Dimensions.get('window');
 
 interface AddButtonProps {
     onPress: () => void;
+    icon?: 'plus' | 'save' | 'edit' | 'delete' | 'check' | 'cancel';
+    iconLibrary?: 'FontAwesome' | 'Entypo' | 'AntDesign';
+    text?: string; // Optional text
+    backgroundColor?: string; // Custom background color
+    size?: 'small' | 'medium' | 'large'; // Size variants
+    animated?: boolean; // Enable/disable animations
+    variant?: 'primary' | 'secondary' | 'danger' | 'success'; // Style variants
 }
 
-const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
-    // Animations - SEPARATE VALUES cho native và JS animations
+const AddButton: React.FC<AddButtonProps> = ({ 
+    onPress,
+    icon = 'plus',
+    iconLibrary = 'AntDesign',
+    text,
+    backgroundColor,
+    size = 'medium',
+    animated = true,
+    variant = 'primary'
+}) => {
+    // Animations
     const pulseAnim = useRef(new Animated.Value(1)).current;
     const glowAnim = useRef(new Animated.Value(0)).current;
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const sparkleAnim = useRef(new Animated.Value(0)).current;
     
-    // Particle type
     interface Particle {
         id: number;
         x: number;
@@ -35,56 +51,95 @@ const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
 
     const [particles, setParticles] = useState<Particle[]>([]);
 
+    // Size configurations
+    const sizeConfig = {
+        small: { 
+            buttonSize: 40, 
+            iconSize: 16, 
+            fontSize: 12,
+            padding: 8
+        },
+        medium: { 
+            buttonSize: 60, 
+            iconSize: 24, 
+            fontSize: 14,
+            padding: 12
+        },
+        large: { 
+            buttonSize: 80, 
+            iconSize: 32, 
+            fontSize: 16,
+            padding: 16
+        }
+    };
+
+    // Variant configurations
+    const variantConfig = {
+        primary: { backgroundColor: '#4CAF50', glowColor: '#4CAF50' },
+        secondary: { backgroundColor: '#2196F3', glowColor: '#2196F3' },
+        danger: { backgroundColor: '#f44336', glowColor: '#f44336' },
+        success: { backgroundColor: '#8BC34A', glowColor: '#8BC34A' }
+    };
+
+    const currentSize = sizeConfig[size];
+    const currentVariant = variantConfig[variant];
+
     useEffect(() => {
-        // Animation de pulsation continue - NATIVE DRIVER
+        if (!animated) return;
+
+        // Pulse animation
         Animated.loop(
             Animated.sequence([
                 Animated.timing(pulseAnim, {
                     toValue: 1.1,
                     duration: 1500,
                     easing: Easing.inOut(Easing.quad),
-                    useNativeDriver: true, // ✅ Native
+                    useNativeDriver: true,
                 }),
                 Animated.timing(pulseAnim, {
                     toValue: 1,
                     duration: 1500,
                     easing: Easing.inOut(Easing.quad),
-                    useNativeDriver: true, // ✅ Native
+                    useNativeDriver: true,
                 })
             ])
         ).start();
 
-        // Animation de glow - NATIVE DRIVER (changed from false to true)
+        // Glow animation
         Animated.loop(
             Animated.sequence([
                 Animated.timing(glowAnim, {
                     toValue: 1,
                     duration: 2000,
-                    useNativeDriver: true, // ✅ Changed to native
+                    useNativeDriver: true,
                 }),
                 Animated.timing(glowAnim, {
                     toValue: 0,
                     duration: 2000,
-                    useNativeDriver: true, // ✅ Changed to native
+                    useNativeDriver: true,
                 })
             ])
         ).start();
 
-        // Animation des particules sparkle - NATIVE DRIVER
+        // Sparkle animation
         Animated.loop(
             Animated.timing(sparkleAnim, {
                 toValue: 1,
                 duration: 3000,
-                useNativeDriver: true, // ✅ Native
+                useNativeDriver: true,
             })
         ).start();
 
         generateParticles();
-    }, []);
+    }, [animated]);
 
     const generateParticles = () => {
+        if (!animated) return;
+        
+        const particleCount = size === 'large' ? 8 : size === 'medium' ? 6 : 4;
         const newParticles = [];
-        for (let i = 0; i < 6; i++) {
+        
+        for (let i = 0; i < particleCount; i++) {
             newParticles.push({
                 id: i,
                 x: Math.random() * 60 - 30,
@@ -96,19 +151,18 @@ const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
         }
         setParticles(newParticles);
 
-        // Animer chaque particule - NATIVE DRIVER
         newParticles.forEach((particle, index) => {
             Animated.loop(
                 Animated.sequence([
                     Animated.timing(particle.animValue, {
                         toValue: 1,
                         duration: 2000 + index * 500,
-                        useNativeDriver: true, //  Native
+                        useNativeDriver: true,
                     }),
                     Animated.timing(particle.animValue, {
                         toValue: 0,
                         duration: 2000 + index * 500,
-                        useNativeDriver: true, //  Native
+                        useNativeDriver: true,
                     })
                 ])
             ).start();
@@ -116,85 +170,150 @@ const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
     };
 
     const handlePressIn = () => {
-        // Animation press - NATIVE DRIVER
+        if (!animated) return;
+        
         Animated.parallel([
             Animated.timing(scaleAnim, {
                 toValue: 0.9,
                 duration: 100,
-                useNativeDriver: true, // ✅ Native
+                useNativeDriver: true,
             }),
             Animated.timing(rotateAnim, {
                 toValue: 1,
                 duration: 200,
-                useNativeDriver: true, // ✅ Native
+                useNativeDriver: true,
             })
         ]).start();
     };
 
     const handlePressOut = () => {
-        // Animation release - NATIVE DRIVER
+        if (!animated) return;
+        
         Animated.parallel([
             Animated.spring(scaleAnim, {
                 toValue: 1,
                 tension: 300,
                 friction: 4,
-                useNativeDriver: true, // ✅ Native
+                useNativeDriver: true,
             }),
             Animated.timing(rotateAnim, {
                 toValue: 0,
                 duration: 300,
-                useNativeDriver: true, // ✅ Native
+                useNativeDriver: true,
             })
         ]).start();
-
-        createCelebrationEffect();
     };
 
-    const createCelebrationEffect = () => {
-        const celebrateAnim = new Animated.Value(0);
-        Animated.timing(celebrateAnim, {
-            toValue: 1,
-            duration: 600,
-            useNativeDriver: true, // ✅ Native
-        }).start();
+    // Icon renderer with proper name mapping
+    type IconLibrary = 'FontAwesome' | 'Entypo' | 'AntDesign';
+    type IconName = 'plus' | 'save' | 'edit' | 'delete' | 'check' | 'cancel';
+
+    const getIconName = (iconName: IconName, library: IconLibrary) => {
+        const iconMappings: Record<IconLibrary, Record<IconName, string>> = {
+            FontAwesome: {
+                plus: 'plus',
+                save: 'save',
+                edit: 'edit',
+                delete: 'trash',
+                check: 'check',
+                cancel: 'times'
+            },
+            Entypo: {
+                plus: 'plus',
+                save: 'save',
+                edit: 'edit',
+                delete: 'trash',
+                check: 'check',
+                cancel: 'cross'
+            },
+            AntDesign: {
+                plus: 'plus',
+                save: 'save',
+                edit: 'edit',
+                delete: 'delete',
+                check: 'check',
+                cancel: 'close'
+            }
+        };
+        
+        return iconMappings[library]?.[iconName] || iconName;
+    };
+
+    const renderIcon = () => {
+        const mappedIconName = getIconName(icon, iconLibrary);
+
+        switch (iconLibrary) {
+            case 'FontAwesome':
+                return (
+                    <FontAwesome
+                        name={mappedIconName as React.ComponentProps<typeof FontAwesome>['name']}
+                        size={currentSize.iconSize}
+                        color="white"
+                    />
+                );
+            case 'Entypo':
+                return (
+                    <Entypo
+                        name={mappedIconName as React.ComponentProps<typeof Entypo>['name']}
+                        size={currentSize.iconSize}
+                        color="white"
+                    />
+                );
+            default:
+                return (
+                    <AntDesign
+                        name={mappedIconName as React.ComponentProps<typeof AntDesign>['name']}
+                        size={currentSize.iconSize}
+                        color="white"
+                    />
+                );
+        }
     };
 
     // Interpolations
-    const glowOpacity = glowAnim.interpolate({
+    const glowOpacity = animated ? glowAnim.interpolate({
         inputRange: [0, 1],
         outputRange: [0.3, 0.8]
-    });
+    }) : 0.3;
 
-    const rotateInterpolate = rotateAnim.interpolate({
+    const rotateInterpolate = animated ? rotateAnim.interpolate({
         inputRange: [0, 1],
         outputRange: ['0deg', '180deg']
-    });
+    }) : '0deg';
 
-    const sparkleTranslateY = sparkleAnim.interpolate({
+    const sparkleTranslateY = animated ? sparkleAnim.interpolate({
         inputRange: [0, 1],
         outputRange: [0, -20]
-    });
+    }) : 0;
 
-    const sparkleOpacity = sparkleAnim.interpolate({
+    const sparkleOpacity = animated ? sparkleAnim.interpolate({
         inputRange: [0, 0.5, 1],
         outputRange: [0, 1, 0]
-    });
+    }) : 0;
+
+    const finalBackgroundColor = backgroundColor || currentVariant.backgroundColor;
 
     return (
-        <View style={styles.container}>
-            {/* Effet de glow extérieur */}
-            <Animated.View 
-                style={[
-                    styles.glowRing,
-                    {
-                        opacity: glowOpacity,
-                        transform: [{ scale: pulseAnim }]
-                    }
-                ]}
-            />
+        <View style={[styles.container, { width: currentSize.buttonSize + 40, height: currentSize.buttonSize + 40 }]}>
+            {/* Glow effect */}
+            {animated && (
+                <Animated.View 
+                    style={[
+                        styles.glowRing,
+                        {
+                            width: currentSize.buttonSize + 20,
+                            height: currentSize.buttonSize + 20,
+                            borderRadius: (currentSize.buttonSize + 20) / 2,
+                            backgroundColor: currentVariant.glowColor,
+                            opacity: glowOpacity,
+                            transform: [{ scale: pulseAnim }]
+                        }
+                    ]}
+                />
+            )}
 
-            {/* Particules flottantes */}
-            {particles.map((particle) => {
+            {/* Particles */}
+            {animated && particles.map((particle) => {
                 const translateY = particle.animValue.interpolate({
                     inputRange: [0, 1],
                     outputRange: [particle.y, particle.y - 30]
@@ -211,8 +330,8 @@ const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
                         style={[
                             styles.particle,
                             {
-                                left: 32 + particle.x,
-                                top: 32 + particle.y,
+                                left: (currentSize.buttonSize / 2) + particle.x,
+                                top: (currentSize.buttonSize / 2) + particle.y,
                                 width: particle.size,
                                 height: particle.size,
                                 opacity,
@@ -223,41 +342,18 @@ const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
                 );
             })}
 
-            {/* Sparkles décoratifs */}
-            <Animated.View 
-                style={[
-                    styles.sparkle,
-                    styles.sparkle1,
-                    {
-                        opacity: sparkleOpacity,
-                        transform: [{ translateY: sparkleTranslateY }]
-                    }
-                ]}
-            />
-            <Animated.View 
-                style={[
-                    styles.sparkle,
-                    styles.sparkle2,
-                    {
-                        opacity: sparkleOpacity,
-                        transform: [{ translateY: sparkleTranslateY }]
-                    }
-                ]}
-            />
-            <Animated.View 
-                style={[
-                    styles.sparkle,
-                    styles.sparkle3,
-                    {
-                        opacity: sparkleOpacity,
-                        transform: [{ translateY: sparkleTranslateY }]
-                    }
-                ]}
-            />
-
-            {/* Bouton principal */}
+            {/* Main button */}
             <TouchableOpacity
-                style={styles.button}
+                style={[
+                    styles.button,
+                    {
+                        width: currentSize.buttonSize,
+                        height: currentSize.buttonSize,
+                        borderRadius: currentSize.buttonSize / 2,
+                        backgroundColor: finalBackgroundColor,
+                        padding: currentSize.padding
+                    }
+                ]}
                 onPressIn={handlePressIn}
                 onPressOut={handlePressOut}
                 onPress={onPress}
@@ -267,153 +363,61 @@ const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
                     style={[
                         styles.buttonInner,
                         {
-                            transform: [
+                            transform: animated ? [
                                 { scale: scaleAnim },
                                 { rotate: rotateInterpolate }
-                            ]
+                            ] : []
                         }
                     ]}
                 >
-                    {/* Gradient effect simulation */}
-                    <View style={styles.gradientOverlay} />
-                    
-                    {/* Plus icon */}
-                    <Text style={styles.plusIcon}>+</Text>
-                    
-                    {/* Shine effect */}
-                    <View style={styles.shineEffect} />
+                    {renderIcon()}
+                    {text && (
+                        <Text style={[styles.text, { fontSize: currentSize.fontSize }]}>
+                            {text}
+                        </Text>
+                    )}
                 </Animated.View>
             </TouchableOpacity>
-
-            {/* Ring pulsant */}
-            <Animated.View 
-                style={[
-                    styles.pulseRing,
-                    {
-                        transform: [{ scale: pulseAnim }]
-                    }
-                ]}
-            />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        width: 64,
-        height: 64,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'relative',
     },
-
-    button: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 10,
-    },
-    
-    buttonInner: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: '#f3e5e5ff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: '#FF6B6B',
-        shadowOffset: {
-            width: 0,
-            height: 8,
-        },
-        shadowOpacity: 0.4,
-        shadowRadius: 16,
-        elevation: 8,
-        overflow: 'hidden',
-    },
-
-    gradientOverlay: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        borderRadius: 32,
-        backgroundColor: 'rgba(255, 142, 142, 0.3)',
-    },
-
-    plusIcon: {
-        fontSize: 28,
-        color: 'black',
-        fontWeight: '300',
-        textAlign: 'center',
-        zIndex: 2,
-    },
-
-    shineEffect: {
-        position: 'absolute',
-        top: 8,
-        left: 8,
-        right: 8,
-        height: 16,
-        borderRadius: 16,
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    },
-
     glowRing: {
         position: 'absolute',
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: 'rgba(255, 107, 107, 0.2)',
-        zIndex: 1,
+        opacity: 0.3,
     },
-
-    pulseRing: {
-        position: 'absolute',
-        width: 72,
-        height: 72,
-        borderRadius: 36,
-        borderWidth: 2,
-        borderColor: 'rgba(252, 249, 249, 0.3)',
-        zIndex: 2,
-    },
-
     particle: {
         position: 'absolute',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        borderRadius: 10,
-        zIndex: 5,
+        borderRadius: 50,
     },
-
-    sparkle: {
-        position: 'absolute',
-        backgroundColor: 'white',
-        borderRadius: 2,
-        zIndex: 6,
+    button: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
     },
-
-    sparkle1: {
-        width: 4,
-        height: 4,
-        top: 15,
-        left: 20,
+    buttonInner: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-
-    sparkle2: {
-        width: 3,
-        height: 3,
-        top: 45,
-        right: 18,
-    },
-
-    sparkle3: {
-        width: 5,
-        height: 5,
-        bottom: 20,
-        left: 25,
+    text: {
+        color: 'white',
+        fontWeight: 'bold',
+        marginTop: 4,
+        textAlign: 'center',
     },
 });
 

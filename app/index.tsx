@@ -49,8 +49,24 @@ const App = () => {
     ]);
 
     const handleAddNewTask = (newTask: Task) => {
-        console.log('Adding new task:', newTask); 
+        console.log('Adding new task:', newTask);
         setTasks(prevTasks => [...prevTasks, newTask]);
+    };
+
+    const handleHideTask = (id: string) => {
+        const taskToHide = tasks.find(task => task.id === id);
+        setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+
+        if (taskToHide) {
+            Toast.show({
+                type: 'info',
+                text1: 'Đã ẩn nhiệm vụ',
+                text2: `"${taskToHide.title}" đã được ẩn`,
+                position: 'bottom',
+                bottomOffset: 120,
+                visibilityTime: 2000,
+            });
+        }
     };
 
     const handleCreateModal = () => {
@@ -59,15 +75,15 @@ const App = () => {
     };
 
     const handleToggleTask = (id: string) => {
-        console.log('Toggle task:', id); 
+        console.log('Toggle task:', id);
         const task = tasks.find(t => t.id === id);
-        
+
         setTasks(prevTasks =>
             prevTasks.map(task =>
                 task.id === id ? { ...task, completed: !task.completed } : task
             )
         );
-        
+
         if (task) {
             Toast.show({
                 type: task.completed ? 'info' : 'success',
@@ -84,7 +100,7 @@ const App = () => {
         console.log('Delete task:', id);
         const taskToDelete = tasks.find(task => task.id === id);
         setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
-        
+
         if (taskToDelete) {
             Toast.show({
                 type: 'error',
@@ -117,6 +133,7 @@ const App = () => {
             onToggle={handleToggleTask}
             onPress={handleEditTask}
             onDelete={handleDeleteTask}
+            onHide={handleHideTask}
         />
     );
 
@@ -140,19 +157,19 @@ const App = () => {
 
                     {/* FlatList */}
                     {!createModalVisible && (
-                    <FlatList
-                        data={tasks}
-                        renderItem={renderTaskItem}
-                        keyExtractor={(item) => item.id}
-                        style={styles.mainContent}
-                        contentContainerStyle={[
-                            styles.flatListContent,
-                            tasks.length === 0 && styles.emptyContentContainer
-                        ]}
-                        showsVerticalScrollIndicator={false}
-                        ListEmptyComponent={renderEmptyComponent}
-                        ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    />
+                        <FlatList
+                            data={tasks}
+                            renderItem={renderTaskItem}
+                            keyExtractor={(item) => item.id}
+                            style={styles.mainContent}
+                            contentContainerStyle={[
+                                styles.flatListContent,
+                                tasks.length === 0 && styles.emptyContentContainer
+                            ]}
+                            showsVerticalScrollIndicator={false}
+                            ListEmptyComponent={renderEmptyComponent}
+                            ItemSeparatorComponent={() => <View style={styles.separator} />}
+                        />
                     )}
                     {/* Footer */}
                     <Footer onCreateTask={handleCreateModal} />

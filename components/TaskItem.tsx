@@ -18,6 +18,7 @@ interface TaskItemProps {
     onToggle?: (id: string) => void;
     onPress?: (id: string) => void;
     onDelete?: (id: string) => void;
+    onHide?: (id: string) => void;
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({
@@ -26,25 +27,47 @@ const TaskItem: React.FC<TaskItemProps> = ({
     completed = false,
     onToggle,
     onPress,
-    onDelete
+    onDelete,
+    onHide,
 }) => {
+
     const [isChecked, setIsChecked] = useState(completed);
     const [showDelete, setShowDelete] = useState(false);
-    
+
+
+    //animation values
     const shake = useSharedValue(0);
+    const opacity = useSharedValue(1);
+    const scale = useSharedValue(1);
+    const height = useSharedValue(80);
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [
-            {
-                translateX: shake.value,
-            },
+            { translateX: shake.value },
+            { scale: scale.value }
         ],
+        opacity: opacity.value,
+        height: height.value,
+        overflow: 'hidden',
     }));
- 
+
+
     // Function to show delete button
     const showDeleteButton = () => {
         setShowDelete(true);
     };
+
+    //function to hide task item with animation
+      const hideTaskItem = () => {
+        opacity.value = withTiming(0, { duration: 300 });
+        scale.value = withTiming(0.8, { duration: 300 });
+        height.value = withTiming(0, { duration: 300 }, () => {
+            if (onHide) {
+                runOnJS(onHide)(id);
+            }
+        });
+    };
+
 
     // Long press gesture
     const longPressGesture = Gesture.LongPress()
@@ -80,8 +103,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
         setShowDelete(false);
     };
 
-    const handleHideDelete = () => {
+    const handelHideTaskItem = () => {
         setShowDelete(false);
+        hideTaskItem();
     };
 
     return (
@@ -94,7 +118,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
                         onValueChange={handleToggle}
                         color={isChecked ? '#4CAF50' : undefined}
                     />
-                    
+
                     <TouchableOpacity style={styles.textContainer} onPress={handlePress}>
                         <Text style={[
                             styles.title,
@@ -106,7 +130,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
                     {/* Minus icon khi task completed */}
                     {isChecked && !showDelete && (
-                        <TouchableOpacity onPress={handleHideDelete}>
+                        <TouchableOpacity onPress={handelHideTaskItem}>
                             <AntDesign
                                 style={styles.minusIcon}
                                 name="minus"
@@ -169,10 +193,15 @@ const styles = StyleSheet.create({
         color: '#888',
     },
     minusIcon: {
-        borderWidth: 2,
-        borderColor: '#ccc',
-        borderRadius: 4,
-        padding: 4,
+     backgroundColor: '#FFE5E5',
+        borderWidth: 1,
+        borderColor: '#FF6B6B',
+        borderRadius: 6,
+        padding: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        minWidth: 36,
+        minHeight: 36,
     },
     deleteButton: {
         backgroundColor: '#FF4444',

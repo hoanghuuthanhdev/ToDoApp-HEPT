@@ -1,47 +1,42 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View } from "react-native";
 import AddButton from './AddButton';
-import CreateModel from './ModelCreate';
 
+interface FooterProps {
+    onCreateTask: () => void;
+}
+const Footer: React.FC<FooterProps> = ({ onCreateTask }) => {
 
-const Footer = () => {
-        const [modalVisible, setModalVisible] = useState(false);
     return (
         <View style={styles.container}>
-            <AddButton 
-            onPress={() => setModalVisible(true)}
-            icon='plus'
-            iconLibrary='FontAwesome'
-            text=''
-            backgroundColor='#7A85C1'
-            size='small'
-            animated={true}
-            variant='secondary'
-             />
-
-            {/* Modal */}
-            <CreateModel
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible} 
-                addNew={()=>{}}/>
+            <AddButton
+                onPress={onCreateTask}
+                icon='plus'
+                iconLibrary='FontAwesome'
+                text=''
+                backgroundColor='#7A85C1'
+                size='small'
+                animated={true}
+                variant='secondary'
+            />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        alignItems: 'center',
+        backgroundColor: '#456882',
+        height: 80,
         justifyContent: 'center',
-        height: 80
-    },
-    text: {
-        fontSize: 12,
-        color: '#666',
-        fontWeight: '500',
-    },
+        alignItems: 'center',
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 5,
+    }
 });
 
 export default Footer;

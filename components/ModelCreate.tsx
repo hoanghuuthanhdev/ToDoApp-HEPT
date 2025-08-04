@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
-    //footer
     containerFooter: {
         backgroundColor: 'white',
         paddingVertical: 15,
@@ -74,12 +73,11 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         margin: 20
     }
-
 });
 
 interface IProp {
     modalVisible: boolean;
-    setModalVisible: (visible: boolean) => void; // Fix type
+    setModalVisible: (visible: boolean) => void;
     addNew: (task: any) => void;
 }
 
@@ -89,43 +87,11 @@ function randomIntFromInterval(min: number, max: number) {
 
 const CreateModel = (props: IProp) => {
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState(""); // Fix: separate description from star
-    const [date, setDate] = useState(new Date()); // Add missing date state
-    const [show, setShow] = useState(false); // Add missing show state
+    const [description, setDescription] = useState("");
+    const [date, setDate] = useState(new Date());
+    const [show, setShow] = useState(false);
 
     const { modalVisible, setModalVisible, addNew } = props;
-
-    // Date change handler
-    const onChange = (event: any, selectedDate?: Date) => {
-        const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'ios'); // Keep open on iOS, close on Android
-        setDate(currentDate);
-    };
-
-    const handleSubmit = () => {
-        if (!title.trim()) {
-            Alert.alert('Lỗi', 'Vui lòng nhập tên nhiệm vụ!', [
-                { text: 'OK', onPress: () => console.log('OK Pressed') },
-            ]);
-            return;
-        }
-
-        // Create new task object
-        const newTask = {
-            id: randomIntFromInterval(1, 10000),
-            title: title.trim(),
-            description: description.trim(),
-            dueDate: date,
-            completed: false,
-            createdAt: new Date()
-        };
-
-        addNew(newTask);
-
-        // Reset form and close modal
-        resetForm();
-        setModalVisible(false);
-    };
 
     const resetForm = () => {
         setTitle("");
@@ -139,6 +105,42 @@ const CreateModel = (props: IProp) => {
         setModalVisible(false);
     };
 
+    const onChange = (event: any, selectedDate?: Date) => {
+        const currentDate = selectedDate || date;
+        setShow(Platform.OS === 'ios');
+        setDate(currentDate);
+    };
+
+    const handleSubmit = () => {
+        if (!title.trim()) {
+            Alert.alert(
+                'Lỗi của bạn!',
+                'Vui lòng nhập nhiệm vụ?',
+                [
+                    { text: 'Hủy', style: 'cancel' },
+                    { text: 'Ok', onPress: () => console.log('Đã xóa') },
+                ],
+                { cancelable: true }
+            );
+            return;
+        }
+
+        const newTask = {
+            id: randomIntFromInterval(1, 10000).toString(),
+            title: title.trim(),
+            description: description.trim(),
+            dueDate: date,
+            completed: false,
+            createdAt: new Date()
+        };
+
+        setTimeout(() => {
+            addNew(newTask);
+            resetForm();
+            setModalVisible(false);
+        }, 1000);
+    };
+
     return (
         <Modal
             animationType="slide"
@@ -147,7 +149,7 @@ const CreateModel = (props: IProp) => {
             onRequestClose={handleCancel}
         >
             <View style={styles.container}>
-                {/** Header */}
+                {/* Header */}
                 <View style={styles.header}>
                     <AntDesign name="pluscircle" size={24} color="white" />
                     <Text style={styles.title}>Tạo nhiệm vụ mới</Text>
@@ -156,7 +158,7 @@ const CreateModel = (props: IProp) => {
                     </TouchableOpacity>
                 </View>
 
-                {/** Body */}
+                {/* Body */}
                 <View>
                     {/* Task Title */}
                     <View style={styles.groupInput}>
@@ -187,13 +189,12 @@ const CreateModel = (props: IProp) => {
                     {/* Due Date */}
                     <View style={styles.groupInput}>
                         <Text style={styles.text}>Thời gian hoàn thành</Text>
-
                         <TouchableOpacity
                             onPress={() => setShow(true)}
                             style={styles.dateInput}
                         >
                             <Text style={styles.dateText}>
-                                {date.toLocaleDateString('vi-VN', {
+                                📅 {date.toLocaleDateString('vi-VN', {
                                     weekday: 'long',
                                     year: 'numeric',
                                     month: 'long',
@@ -202,30 +203,29 @@ const CreateModel = (props: IProp) => {
                             </Text>
                         </TouchableOpacity>
 
-                        {/* Date Picker */}
                         {show && (
                             <DateTimePicker
                                 value={date}
                                 mode="date"
                                 display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                                 onChange={onChange}
-                                minimumDate={new Date()} // Không cho chọn ngày quá khứ
+                                minimumDate={new Date()}
                             />
                         )}
                     </View>
                 </View>
 
-                {/** Footer */}
+                {/* Footer */}
                 <View style={styles.containerFooter}>
                     <AddButton
-                        onPress={() => { }}
+                        onPress={handleSubmit}
                         icon='check'
-                        iconLibrary='FontAwesome'
+                        iconLibrary='AntDesign'
                         text=''
-                        backgroundColor='#7A85C1'
-                        size='small'
+                        backgroundColor='#4CAF50'
+                        size='medium'
                         animated={true}
-                        variant='secondary'
+                        variant='primary'
                     />
                 </View>
             </View>

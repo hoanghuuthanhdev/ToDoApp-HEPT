@@ -2,7 +2,9 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from 'react';
 import { Alert, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Toast from 'react-native-toast-message';
 import AddButton from './AddButton';
+
 
 const styles = StyleSheet.create({
     container: {
@@ -134,11 +136,19 @@ const CreateModel = (props: IProp) => {
             createdAt: new Date()
         };
 
-        setTimeout(() => {
-            addNew(newTask);
-            resetForm();
-            setModalVisible(false);
-        }, 1000);
+        Toast.show({
+            type: 'success',
+            text1: 'Thành công!',
+            text2: `"${newTask.title}" đã được tạo`,
+            position: 'top',
+            topOffset: 90,
+            visibilityTime: 4000,    
+            autoHide: true,
+        });
+
+        addNew(newTask);
+        resetForm();
+        setModalVisible(false);
     };
 
     return (

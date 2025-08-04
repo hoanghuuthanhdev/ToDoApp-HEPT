@@ -40,7 +40,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
             },
         ],
     }));
-
+ 
     // Function to show delete button
     const showDeleteButton = () => {
         setShowDelete(true);

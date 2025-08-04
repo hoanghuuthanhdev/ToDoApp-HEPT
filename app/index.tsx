@@ -49,7 +49,7 @@ const App = () => {
     ]);
 
     const handleAddNewTask = (newTask: Task) => {
-        console.log('Adding new task:', newTask); // ✅ Debug log
+        console.log('Adding new task:', newTask); 
         setTasks(prevTasks => [...prevTasks, newTask]);
     };
 
@@ -59,7 +59,7 @@ const App = () => {
     };
 
     const handleToggleTask = (id: string) => {
-        console.log('Toggle task:', id); // ✅ Debug log
+        console.log('Toggle task:', id); 
         const task = tasks.find(t => t.id === id);
         
         setTasks(prevTasks =>
@@ -81,7 +81,7 @@ const App = () => {
     };
 
     const handleDeleteTask = (id: string) => {
-        console.log('Delete task:', id); // ✅ Debug log
+        console.log('Delete task:', id);
         const taskToDelete = tasks.find(task => task.id === id);
         setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
         
@@ -162,7 +162,6 @@ const App = () => {
                     setModalVisible={setCreateModalVisible}
                     addNew={handleAddNewTask}
                 />
-                {/* ✅ Global Toast for app actions */}
                 <Toast />
             </SafeAreaProvider>
         </GestureHandlerRootView>

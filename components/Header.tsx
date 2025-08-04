@@ -1,5 +1,6 @@
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -7,6 +8,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 //Type-safe component
 const Header: React.FC = () => {
+    const router = useRouter();
 
     //Dropdown
     const [open, setOpen] = useState(false);
@@ -20,11 +22,32 @@ const Header: React.FC = () => {
     const [showThemeMenu, setShowThemeMenu] = useState(false);
 
     const themeMenuItems = [
-        { label: 'Chế độ sáng', icon: 'sun-o', action: () => console.log('Light theme') },
-        { label: 'Chế độ tối', icon: 'moon-o', action: () => console.log('Dark theme') },
-        { label: 'Cài đặt', icon: 'cog', action: () => console.log('Settings') },
-        { label: 'Thông tin', icon: 'info-circle', action: () => console.log('About') },
+        { key: 'light', label: 'Chế độ sáng', icon: 'sun-o' },
+        { key: 'dark', label: 'Chế độ tối', icon: 'moon-o' },
+        { key: 'setting', label: 'Cài đặt', icon: 'cog' },
+        { key: 'infor', label: 'Thông tin', icon: 'info-circle' },
     ];
+
+    const handelMenuAction = (key: string) => {
+        switch (key) {
+            case 'light':
+                console.log('Light')
+                break;
+            case 'dark':
+                console.log('Dark')
+                break;
+            case 'setting':
+                console.log('setting')
+                break;
+            case 'infor':
+                router.push('/infor')
+                break;
+            default:
+                'Unknow action';
+        }
+        setShowThemeMenu(false)
+    }
+
 
     //Handel click without dropdown
     const handleOutsidePress = () => {
@@ -106,8 +129,7 @@ const Header: React.FC = () => {
                                         key={index}
                                         style={styles.themeMenuItem}
                                         onPress={() => {
-                                            item.action();
-                                            setShowThemeMenu(false);
+                                            handelMenuAction(item.key)
                                         }}
                                     >
                                         <FontAwesome

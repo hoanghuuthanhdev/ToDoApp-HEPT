@@ -2,7 +2,6 @@
 
 A modern, feature-rich task management application built with React Native and Expo. Clean UI design with smooth animations and intuitive user experience.
 
-![ToDoApp Screenshot](./assets/screenshot.png)
 
 ## ✨ Features
 
@@ -84,7 +83,7 @@ ToDoApp/
 
 ### **Prerequisites**
 - Node.js (v16 or higher)
-- npm or yarn
+- npm 
 - Expo CLI
 - iOS Simulator / Android Emulator
 
@@ -92,16 +91,14 @@ ToDoApp/
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/ToDoApp.git
+git clone https://github.com/hoanghuuthanhdev/ToDoApp-HEPT
 cd ToDoApp
 ```
 
 2. **Install dependencies**
 ```bash
 npm install
-# or
-yarn install
-```
+
 
 3. **Start the development server**
 ```bash

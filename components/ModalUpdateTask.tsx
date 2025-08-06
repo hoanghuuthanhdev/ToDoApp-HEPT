@@ -1,7 +1,7 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import AddButton from './AddButton';
 
@@ -93,22 +93,31 @@ interface IProp {
 
 const UpdateModal = ({ modalVisible, setModalVisible, updateTask, TaskData }: IProp) => {
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState(""); 
+    const [description, setDescription] = useState("");
     const [date, setDate] = useState(new Date());
     const [show, setShow] = useState(false);
+    const prevTaskId = useRef<string | null>(null);
+
 
     useEffect(() => {
-        if (TaskData) {
+        if (modalVisible && TaskData && TaskData.id !== prevTaskId.current) {
+            prevTaskId.current = TaskData.id;
             setTitle(TaskData.title || "");
             setDescription(TaskData.description || "");
             setDate(TaskData.dueDate ? new Date(TaskData.dueDate) : new Date());
         }
-    }, [TaskData]);
+    }, [modalVisible, TaskData]);
+
+    useEffect(() => {
+        if (!modalVisible) {
+            prevTaskId.current = null;
+        }
+    }, [modalVisible]);
 
     // Date change handler
     const onChange = (event: any, selectedDate?: Date) => {
         const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'ios'); 
+        setShow(Platform.OS === 'ios');
         setDate(currentDate);
     };
 

@@ -1,8 +1,10 @@
+import { ThemeProvider } from '@contexts/context';
 import Footer from '@components/Footer';
 import Header from '@components/Header';
 import CreateModel from '@components/ModalCreate';
 import UpdateModal from '@components/ModalUpdateTask';
 import TaskItem from '@components/TaskItem';
+import { useTheme } from '@contexts/context';
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -19,7 +21,8 @@ interface Task {
     createdAt: Date;
 }
 
-const App = () => {
+const MainContent = () => {
+    const { colors } = useTheme();
     // Add state for update modal (likely near your other state declarations)
     const [updateModalVisible, setUpdateModalVisible] = useState(false);
     const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined); // or appropriate task type
@@ -156,6 +159,7 @@ const App = () => {
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaProvider style={{ flex: 1 }}>
                 <View style={[styles.mainContainer, {
+                    backgroundColor: colors.background,
                     paddingTop: insets.top,
                     paddingBottom: insets.bottom
                 }]}>
@@ -168,7 +172,7 @@ const App = () => {
                             data={tasks}
                             renderItem={renderTaskItem}
                             keyExtractor={(item) => item.id}
-                            style={styles.mainContent}
+                            style={[styles.mainContent, { backgroundColor: colors.background }]}
                             contentContainerStyle={[
                                 styles.flatListContent,
                                 tasks.length === 0 && styles.emptyContentContainer
@@ -199,15 +203,20 @@ const App = () => {
         </GestureHandlerRootView>
     );
 };
+const App = () => {
+    return (
+        <ThemeProvider>
+            <MainContent />
+        </ThemeProvider>
+    )
+}
 
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
     mainContent: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
     flatListContent: {
         paddingVertical: 10,

@@ -1,3 +1,4 @@
+import { useTheme } from '@contexts/context';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Checkbox from 'expo-checkbox';
 import React, { useState } from 'react';
@@ -33,7 +34,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
     const [isChecked, setIsChecked] = useState(completed);
     const [showDelete, setShowDelete] = useState(false);
-
+    const { colors } = useTheme(); 
 
     //animation values
     const shake = useSharedValue(0);
@@ -58,7 +59,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
     };
 
     //function to hide task item with animation
-      const hideTaskItem = () => {
+    const hideTaskItem = () => {
         opacity.value = withTiming(0, { duration: 300 });
         scale.value = withTiming(0.8, { duration: 300 });
         height.value = withTiming(0, { duration: 300 }, () => {
@@ -123,7 +124,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
                         <Text style={[
                             styles.title,
                             isChecked && styles.completedTitle
-                        ]}>
+                        ]}
+                            numberOfLines={1}
+                            ellipsizeMode="tail">
                             {title}
                         </Text>
                     </TouchableOpacity>
@@ -157,7 +160,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: 'white',
+        // backgroundColor: 'white',
         padding: 15,
         marginHorizontal: 15,
         marginVertical: 5,
@@ -194,7 +197,7 @@ const styles = StyleSheet.create({
         color: '#888',
     },
     minusIcon: {
-     backgroundColor: '#FFE5E5',
+        backgroundColor: '#FFE5E5',
         borderWidth: 1,
         borderColor: '#FF6B6B',
         borderRadius: 6,

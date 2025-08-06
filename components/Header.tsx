@@ -1,3 +1,4 @@
+import { useTheme } from '@contexts/context';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
@@ -9,7 +10,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 //Type-safe component
 const Header: React.FC = () => {
     const router = useRouter();
-
+    const { colors, theme, setTheme } = useTheme();
     //Dropdown
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState<string | null>('all'); // Mặc định là "Tất cả"
@@ -31,10 +32,12 @@ const Header: React.FC = () => {
     const handelMenuAction = (key: string) => {
         switch (key) {
             case 'light':
+                setTheme('light');
                 console.log('Light')
                 break;
             case 'dark':
                 console.log('Dark')
+                setTheme('dark');
                 break;
             case 'setting':
                 console.log('setting')
@@ -138,7 +141,12 @@ const Header: React.FC = () => {
                                             color="white"
                                             style={styles.themeMenuIcon}
                                         />
-                                        <Text style={styles.themeMenuText}>{item.label}</Text>
+                                        <Text style={[styles.themeMenuText, { color: colors.text }]}>{item.label}</Text>
+                                        {/* Hiển thị indicator cho theme hiện tại */}
+                                        {((item.key === 'light' && theme === 'light') ||
+                                            (item.key === 'dark' && theme === 'dark')) && (
+                                                <FontAwesome name="check" size={14} color={colors.primary} />
+                                            )}
                                     </TouchableOpacity>
                                 ))}
                             </View>

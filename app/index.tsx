@@ -1,5 +1,6 @@
 import Footer from '@components/Footer';
 import Header from '@components/Header';
+import UpdateModal from '@components/ModalUpdateTask';
 import CreateModel from '@components/ModelCreate';
 import TaskItem from '@components/TaskItem';
 import React, { useState } from 'react';
@@ -19,6 +20,10 @@ interface Task {
 }
 
 const App = () => {
+    // Add state for update modal (likely near your other state declarations)
+    const [updateModalVisible, setUpdateModalVisible] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined); // or appropriate task type
+
     const insets = useSafeAreaInsets();
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [tasks, setTasks] = useState<Task[]>([
@@ -115,10 +120,32 @@ const App = () => {
 
     const handleEditTask = (id: string) => {
         console.log('Edit task:', id);
+        const taskToEdit = tasks.find(task => task.id === id);
+        if (taskToEdit) {
+            setSelectedTask(taskToEdit);
+            setUpdateModalVisible(true);
+
+        }
+    };
+
+    const handleUpdateTask = (updatedTask: Task) => {
+        console.log('Updating task:', updatedTask);
+
+        // Cập nhật task trong danh sách
+        setTasks(prevTasks =>
+            prevTasks.map(task =>
+                task.id === updatedTask.id ? updatedTask : task
+            )
+        );
+
+        // Đóng modal và reset selectedTask
+        setUpdateModalVisible(false);
+        setSelectedTask(undefined);
+
         Toast.show({
-            type: 'info',
-            text1: 'Chỉnh sửa',
-            text2: 'Tính năng đang phát triển',
+            type: 'success',
+            text1: 'Đã cập nhật!',
+            text2: `"${updatedTask.title}" đã được cập nhật`,
             position: 'bottom',
             bottomOffset: 150,
             visibilityTime: 2000,
@@ -156,7 +183,7 @@ const App = () => {
                     <Header />
 
                     {/* FlatList */}
-                    {!createModalVisible && (
+                    {!createModalVisible && !updateModalVisible && (
                         <FlatList
                             data={tasks}
                             renderItem={renderTaskItem}
@@ -179,6 +206,14 @@ const App = () => {
                     setModalVisible={setCreateModalVisible}
                     addNew={handleAddNewTask}
                 />
+                {selectedTask && (
+                    <UpdateModal
+                        modalVisible={updateModalVisible}
+                        setModalVisible={setUpdateModalVisible}
+                        updateTask={handleUpdateTask}
+                        TaskData={selectedTask}
+                    />
+                )}
                 <Toast />
             </SafeAreaProvider>
         </GestureHandlerRootView>

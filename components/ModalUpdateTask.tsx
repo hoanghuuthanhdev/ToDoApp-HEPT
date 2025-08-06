@@ -89,15 +89,12 @@ interface IProp {
     }
 }
 
-function randomIntFromInterval(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-}
 
 const UpdateModal = ({ modalVisible, setModalVisible, updateTask, TaskData }: IProp) => {
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState(""); // Fix: separate description from star
-    const [date, setDate] = useState(new Date()); // Add missing date state
-    const [show, setShow] = useState(false); // Add missing show state
+    const [description, setDescription] = useState(""); 
+    const [date, setDate] = useState(new Date());
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         if (TaskData) {
@@ -110,7 +107,7 @@ const UpdateModal = ({ modalVisible, setModalVisible, updateTask, TaskData }: IP
     // Date change handler
     const onChange = (event: any, selectedDate?: Date) => {
         const currentDate = selectedDate || date;
-        setShow(Platform.OS === 'ios'); // Keep open on iOS, close on Android
+        setShow(Platform.OS === 'ios'); 
         setDate(currentDate);
     };
 

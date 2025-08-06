@@ -1,10 +1,9 @@
-import { ThemeProvider } from '@contexts/context';
 import Footer from '@components/Footer';
 import Header from '@components/Header';
 import CreateModel from '@components/ModalCreate';
 import UpdateModal from '@components/ModalUpdateTask';
 import TaskItem from '@components/TaskItem';
-import { useTheme } from '@contexts/context';
+import { ThemeProvider, useTheme } from '@contexts/context';
 import React, { useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -150,8 +149,8 @@ const MainContent = () => {
                 style={{ width: 240, height: 240, marginBottom: 24 }}
                 resizeMode="contain"
             />
-            <Text style={styles.emptyTitle}>Chill thôi bro''''''</Text>
-            <Text style={styles.emptySubtitle}>Nhấn nút + để tạo nhiệm vụ đầu tiên</Text>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>Chill thôi bro''''''</Text>
+            <Text style={[styles.emptySubtitle,{color: colors.text}]}>Nhấn nút + để tạo nhiệm vụ đầu tiên</Text>
         </View>
     );
 

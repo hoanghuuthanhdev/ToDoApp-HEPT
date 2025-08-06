@@ -94,21 +94,29 @@ const Header: React.FC = () => {
                                 setOpen={setOpen}
                                 setValue={setValue}
                                 setItems={setItems}
-                                style={[styles.dropdown, styles.inputRow]} // Ẩn input row
-                                dropDownContainerStyle={styles.dropdownContainer}
+                                style={[
+                                    styles.dropdown,
+                                    styles.inputRow,
+                                    { backgroundColor: colors.background, borderColor: colors.border }
+                                ]}
+                                dropDownContainerStyle={{
+                                    ...styles.dropdownContainer,
+                                    backgroundColor: colors.background,
+                                    borderColor: colors.border,
+                                }}
                                 zIndex={1000}
-                                placeholder="Tất cả" // Hiển thị mặc định
+                                placeholder="Tất cả"
                                 showArrowIcon={false}
                                 showTickIcon={true}
                                 textStyle={{
-                                    color: 'white',
+                                    color: colors.text,
                                     fontWeight: 'bold',
                                     fontSize: 16,
                                 }}
                                 tickIconStyle={{
                                     width: 20,
                                     height: 20,
-                                    tintColor: '#FFD700',
+                                    tintColor: colors.primary,
                                 } as any}
                             />
                         </View>
@@ -126,11 +134,11 @@ const Header: React.FC = () => {
                     {/* Dropdown theme menu */}
                     {showThemeMenu && (
                         <View style={styles.themeMenuWrapper}>
-                            <View style={styles.themeMenu}>
+                            <View style={[styles.themeMenu, {backgroundColor: colors.background}]}>
                                 {themeMenuItems.map((item, index) => (
                                     <TouchableOpacity
                                         key={index}
-                                        style={styles.themeMenuItem}
+                                        style={[styles.themeMenuItem,{backgroundColor: colors.background}]}
                                         onPress={() => {
                                             handelMenuAction(item.key)
                                         }}
@@ -138,8 +146,8 @@ const Header: React.FC = () => {
                                         <FontAwesome
                                             name={item.icon as any}
                                             size={16}
-                                            color="white"
-                                            style={styles.themeMenuIcon}
+                                            color={colors.text}
+                                            style={[styles.themeMenuIcon,{backgroundColor: colors.background}]}
                                         />
                                         <Text style={[styles.themeMenuText, { color: colors.text }]}>{item.label}</Text>
                                         {/* Hiển thị indicator cho theme hiện tại */}

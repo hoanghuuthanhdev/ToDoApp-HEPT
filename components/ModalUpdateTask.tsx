@@ -1,4 +1,5 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useEffect, useState } from 'react';
 import { Alert, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -153,8 +154,8 @@ const UpdateModal = ({ modalVisible, setModalVisible, updateTask, TaskData }: IP
             <View style={styles.container}>
                 {/** Header */}
                 <View style={styles.header}>
-                    <AntDesign name="pluscircle" size={24} color="white" />
-                    <Text style={styles.title}>Tạo nhiệm vụ mới</Text>
+                    <Feather name="chevrons-up" size={34} color="white" />
+                    <Text style={styles.title}>Cập nhật nhiệm vụ</Text>
                     <TouchableOpacity onPress={handleCancel}>
                         <AntDesign name="close" size={24} color="white" />
                     </TouchableOpacity>
@@ -222,7 +223,7 @@ const UpdateModal = ({ modalVisible, setModalVisible, updateTask, TaskData }: IP
                 {/** Footer */}
                 <View style={styles.containerFooter}>
                     <AddButton
-                        onPress={() => { }}
+                        onPress={handleSubmit}
                         icon='check'
                         iconLibrary='FontAwesome'
                         text=''

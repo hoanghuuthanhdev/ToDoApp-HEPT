@@ -34,6 +34,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const [isChecked, setIsChecked] = useState(completed);
   const [showDelete, setShowDelete] = useState(false);
   const { colors } = useTheme();
+  
 
   //animation values
   const shake = useSharedValue(0);

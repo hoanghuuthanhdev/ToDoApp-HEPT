@@ -1,10 +1,10 @@
 import Footer from '@components/Footer';
 import Header from '@components/Header';
+import CreateModel from '@components/ModalCreate';
 import UpdateModal from '@components/ModalUpdateTask';
-import CreateModel from '@components/ModelCreate';
 import TaskItem from '@components/TaskItem';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -27,30 +27,6 @@ const App = () => {
     const insets = useSafeAreaInsets();
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [tasks, setTasks] = useState<Task[]>([
-        {
-            id: '1',
-            title: 'Sample Task 1',
-            description: 'First sample task',
-            completed: false,
-            dueDate: new Date(),
-            createdAt: new Date()
-        },
-        {
-            id: '2',
-            title: 'Sample Task 2',
-            description: 'Second sample task',
-            completed: true,
-            dueDate: new Date(),
-            createdAt: new Date()
-        },
-        {
-            id: '3',
-            title: 'Sample Task 3',
-            description: 'Third sample task',
-            completed: false,
-            dueDate: new Date(),
-            createdAt: new Date()
-        }
     ]);
 
     const handleAddNewTask = (newTask: Task) => {
@@ -166,8 +142,12 @@ const App = () => {
 
     const renderEmptyComponent = () => (
         <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>📝</Text>
-            <Text style={styles.emptyTitle}>Chưa có nhiệm vụ nào</Text>
+            <Image
+                source={require('@assets/images/chill.png')}
+                style={{ width: 240, height: 240, marginBottom: 24 }}
+                resizeMode="contain"
+            />
+            <Text style={styles.emptyTitle}>Chill thôi bro''''''</Text>
             <Text style={styles.emptySubtitle}>Nhấn nút + để tạo nhiệm vụ đầu tiên</Text>
         </View>
     );

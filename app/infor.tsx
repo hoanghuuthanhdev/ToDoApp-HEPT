@@ -1,8 +1,8 @@
-import { Task } from "@/types/task";
-import Header from "@components/Header";
+
+import InfoHeader from "@components/HeaderInfo";
 import { ThemeProvider, useTheme } from "@contexts/context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import React, { useCallback, useState } from "react";
+import React from "react";
 import {
     Linking,
     ScrollView,
@@ -21,14 +21,10 @@ const InfoScreen = () => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
-  const [tasks] = useState<Task[]>([]);
-
-  const handleFilteredTasksChange = useCallback((filtered: Task[]) => {}, []);
-
   const appInfo = {
     name: "ToDoApp - HEPT",
     version: "1.0.0",
-    developer: "HEPT Team",
+    developer: "Thanh.sd",
     description:
       "Dự án ứng dụng công nghệ React Native & Expo thực hành các kiến thức căn bản vào đời sống, quản lý công việc đơn giản và hiệu quả",
     features: [
@@ -38,7 +34,7 @@ const InfoScreen = () => {
       "Thông báo",
     ],
     contact: {
-      email: "thanhhuuhoang.hpt.org",
+      email: "thanhhuuhoang.htech.org",
       website: "https://hephaestus-tech.org/",
       github: "https://github.com/hoanghuuthanhdev/ToDoApp-HEPT",
     },
@@ -82,11 +78,8 @@ const InfoScreen = () => {
             },
           ]}
         >
-          {/* Header giống như index */}
-          <Header
-            tasks={tasks}
-            onFilteredTasksChange={handleFilteredTasksChange}
-          />
+          {/* Header */}
+          <InfoHeader/>
 
           {/* Content */}
           <ScrollView

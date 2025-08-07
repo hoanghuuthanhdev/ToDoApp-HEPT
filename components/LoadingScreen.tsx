@@ -21,7 +21,7 @@ const SimpleLoadingScreen: React.FC<SimpleLoadingScreenProps> = ({
   onLoadingComplete,
   duration = 2500,
 }) => {
-  const [loadingText, setLoadingText] = useState("Đang khởi tạo...");
+
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [loadedTasks, setLoadedTasks] = useState<Task[]>([]);
 
@@ -30,13 +30,9 @@ const SimpleLoadingScreen: React.FC<SimpleLoadingScreenProps> = ({
       const startTime = Date.now();
 
       try {
-        setLoadingText("Đang tải dữ liệu...");
-
         // Load tasks from AsyncStorage
         const tasks = await StorageService.getTasks();
-
         setLoadedTasks(tasks);
-        setLoadingText("Dữ liệu đã sẵn sàng!");
         setIsDataLoaded(true);
 
         //ensure the loading screen is displayed for at least the minimum duration
@@ -49,7 +45,6 @@ const SimpleLoadingScreen: React.FC<SimpleLoadingScreenProps> = ({
           }
         }, remainingTime);
       } catch (error) {
-        setLoadingText("Lỗi tải dữ liệu!");
 
         setTimeout(() => {
           if (onLoadingComplete) {

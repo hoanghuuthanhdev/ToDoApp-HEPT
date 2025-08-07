@@ -1,3 +1,4 @@
+import SimpleLoadingScreen from "@components/LoadingScreen";
 import { Task } from "@/types/task";
 import Footer from "@components/Footer";
 import Header from "@components/Header";
@@ -255,6 +256,19 @@ const MainContent = () => {
   );
 };
 const App = () => {
+    const [isLoading, setIsLoading] = useState(true);
+    
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+    if (isLoading) {
+    return (
+      <SimpleLoadingScreen 
+        onLoadingComplete={handleLoadingComplete}
+        duration={2500} // 2.5 giây
+      />
+    );
+  }
   return (
     <ThemeProvider>
       <MainContent />

@@ -33,7 +33,7 @@ const InfoScreen = () => {
       "Thông báo",
     ],
     contact: {
-      email: "thanhhuuhoang.htech.org",
+      email: "thanhhuuhoang.sd@gmail.com",
       website: "https://hephaestus-tech.org/",
       github: "https://github.com/hoanghuuthanhdev/ToDoApp-HEPT",
     },
@@ -209,7 +209,7 @@ const InfoScreen = () => {
             {/* Copyright */}
             <View style={styles.footer}>
               <Text style={[styles.copyright, { color: colors.textSecondary }]}>
-                Thank you for ❤️ in you
+                Thank you❤️ "No perfection, only better".
               </Text>
             </View>
           </ScrollView>

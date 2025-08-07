@@ -63,7 +63,6 @@ const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
   const themeMenuItems = [
     { key: "light", label: "Chế độ sáng", icon: "sun-o" },
     { key: "dark", label: "Chế độ tối", icon: "moon-o" },
-    { key: "setting", label: "Cài đặt", icon: "cog" },
     { key: "infor", label: "Thông tin", icon: "info-circle" },
   ];
 
@@ -84,9 +83,6 @@ const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
       case "dark":
         console.log("Dark");
         setTheme("dark");
-        break;
-      case "setting":
-        console.log("setting");
         break;
       case "infor":
         router.push("/infor");
@@ -222,7 +218,7 @@ const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
                       <FontAwesome
                         name="check"
                         size={14}
-                        color={colors.primary}
+                        color={colors.text}
                       />
                     )}
                   </TouchableOpacity>

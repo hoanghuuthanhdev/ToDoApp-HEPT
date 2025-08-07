@@ -1,20 +1,19 @@
-
 import InfoHeader from "@components/HeaderInfo";
 import { ThemeProvider, useTheme } from "@contexts/context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React from "react";
 import {
-    Linking,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
-    SafeAreaProvider,
-    useSafeAreaInsets,
+  SafeAreaProvider,
+  useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
 const InfoScreen = () => {
@@ -54,14 +53,20 @@ const InfoScreen = () => {
         url = value;
         break;
     }
-
     try {
-      const supported = await Linking.canOpenURL(url);
-      if (supported) {
-        await Linking.openURL(url);
+      // Với email → kiểm tra được
+      if (url.startsWith("mailto:")) {
+        const supported = await Linking.canOpenURL(url);
+        if (!supported) {
+          alert("Thiết bị không hỗ trợ mở email.");
+          return;
+        }
       }
+
+      // Với URL web → không kiểm tra, mở luôn
+      await Linking.openURL(url);
     } catch (error) {
-      console.error("Không thể mở link:", error);
+      alert("Đã xảy ra lỗi khi mở liên kết.");
     }
   };
 
@@ -79,7 +84,7 @@ const InfoScreen = () => {
           ]}
         >
           {/* Header */}
-          <InfoHeader/>
+          <InfoHeader />
 
           {/* Content */}
           <ScrollView

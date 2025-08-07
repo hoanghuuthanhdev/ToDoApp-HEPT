@@ -128,7 +128,7 @@ const CreateModel = (props: IProp) => {
         "Vui lòng nhập nhiệm vụ?",
         [
           { text: "Hủy", style: "cancel" },
-          { text: "Ok", onPress: () => console.log("Đã xóa") },
+          { text: "Ok" },
         ],
         { cancelable: true }
       );

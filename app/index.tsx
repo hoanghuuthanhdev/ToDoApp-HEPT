@@ -1,12 +1,13 @@
-import SimpleLoadingScreen from "@components/LoadingScreen";
-import { Task } from "@/types/task";
+import { Task } from "@/types/Task";
 import Footer from "@components/Footer";
 import Header from "@components/Header";
+import SimpleLoadingScreen from "@components/LoadingScreen";
 import CreateModel from "@components/ModalCreate";
 import UpdateModal from "@components/ModalUpdateTask";
 import TaskItem from "@components/TaskItem";
 import { ThemeProvider, useTheme } from "@contexts/context";
-import React, { useCallback, useState } from "react";
+import { StorageService } from "@utils/Storage";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -15,7 +16,7 @@ import {
 } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
-const MainContent = () => {
+const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
   const { colors, filter } = useTheme();
   // Add state for update modal (likely near your other state declarations)
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
@@ -23,18 +24,23 @@ const MainContent = () => {
 
   const insets = useSafeAreaInsets();
   const [createModalVisible, setCreateModalVisible] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
 
   //state to receive filtered task from the header
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+
+  useEffect(()=>{
+    setTasks(initialTasks);
+  },[initialTasks])
 
   //callback to receive filtered tasks from the header
   const handleFilteredTasksChange = useCallback((filtered: Task[]) => {
     setFilteredTasks(filtered);
   }, []);
 
-  const handleAddNewTask = (newTask: Task) => {
-    console.log("Adding new task:", newTask);
+  const handleAddNewTask = async (newTask: Task) => {
+    //save to asynchStorage
+    await StorageService.addTask(newTask);
     setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
@@ -55,35 +61,51 @@ const MainContent = () => {
   };
 
   const handleCreateModal = () => {
-    console.log("Opening create modal...");
     setCreateModalVisible(true);
   };
 
-  const handleToggleTask = (id: string) => {
-    console.log("Toggle task:", id);
-    const task = tasks.find((t) => t.id === id);
+  const handleToggleTask = async (id: string) => {
+    try {
+      const task = tasks.find((t) => t.id === id);
 
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task
-      )
-    );
+      if (task) {
+        const updatedTask = { ...task, completed: !task.completed };
 
-    if (task) {
+        // Update in AsyncStorage
+        await StorageService.updateTask(id, { completed: !task.completed });
+
+        // Update local state
+        setTasks((prevTasks) =>
+          prevTasks.map((task) => (task.id === id ? updatedTask : task))
+        );
+
+        Toast.show({
+          type: task.completed ? "info" : "success",
+          text1: task.completed ? "Đã bỏ hoàn thành" : "Đã hoàn thành",
+          text2: `"${task.title}"`,
+          position: "bottom",
+          bottomOffset: 150,
+          visibilityTime: 2000,
+        });
+      }
+    } catch (error) {
       Toast.show({
-        type: task.completed ? "info" : "success",
-        text1: task.completed ? "Đã bỏ hoàn thành" : "Đã hoàn thành",
-        text2: `"${task.title}"`,
+        type: "error",
+        text1: "Lỗi",
+        text2: "Không thể cập nhật trạng thái",
         position: "bottom",
         bottomOffset: 150,
-        visibilityTime: 2000,
+        visibilityTime: 3000,
       });
     }
   };
 
-  const handleDeleteTask = (id: string) => {
-    console.log("Delete task:", id);
+  const handleDeleteTask = async (id: string) => {
     const taskToDelete = tasks.find((task) => task.id === id);
+
+    //delete from asyncStorage
+    await StorageService.deleteTask(id);
+
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
 
     if (taskToDelete) {
@@ -99,7 +121,6 @@ const MainContent = () => {
   };
 
   const handleEditTask = (id: string) => {
-    console.log("Edit task:", id);
     const taskToEdit = tasks.find((task) => task.id === id);
     if (taskToEdit) {
       setSelectedTask(taskToEdit);
@@ -107,26 +128,40 @@ const MainContent = () => {
     }
   };
 
-  const handleUpdateTask = (updatedTask: Task) => {
-    console.log("Updating task:", updatedTask);
+  const handleUpdateTask = async (updatedTask: Task) => {
+    try {
+      // update in AsyncStorage
+      await StorageService.updateTask(updatedTask.id, updatedTask);
 
-    // Cập nhật task trong danh sách
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-    );
+      // update local state
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updatedTask.id ? updatedTask : task
+        )
+      );
 
-    // Đóng modal và reset selectedTask
-    setUpdateModalVisible(false);
-    setSelectedTask(undefined);
+      // close modal and reset selectedTask
+      setUpdateModalVisible(false);
+      setSelectedTask(undefined);
 
-    Toast.show({
-      type: "success",
-      text1: "Đã cập nhật!",
-      text2: `"${updatedTask.title}" đã được cập nhật`,
-      position: "bottom",
-      bottomOffset: 150,
-      visibilityTime: 2000,
-    });
+      Toast.show({
+        type: "success",
+        text1: "Đã cập nhật!",
+        text2: `"${updatedTask.title}" đã được cập nhật`,
+        position: "bottom",
+        bottomOffset: 150,
+        visibilityTime: 2000,
+      });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Không thể cập nhật nhiệm vụ",
+        position: "bottom",
+        bottomOffset: 150,
+        visibilityTime: 3000,
+      });
+    }
   };
 
   const renderTaskItem = ({ item }: { item: Task }) => (
@@ -256,22 +291,24 @@ const MainContent = () => {
   );
 };
 const App = () => {
-    const [isLoading, setIsLoading] = useState(true);
-    
-  const handleLoadingComplete = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [initialTasks, setInitialTasks] = useState<Task[]>([]);
+
+  const handleLoadingComplete = (loadedTasks: Task[]) => {
+    setInitialTasks(loadedTasks);
     setIsLoading(false);
   };
-    if (isLoading) {
+  if (isLoading) {
     return (
-      <SimpleLoadingScreen 
+      <SimpleLoadingScreen
         onLoadingComplete={handleLoadingComplete}
-        duration={2500} // 2.5 giây
+        duration={2500}
       />
     );
   }
   return (
     <ThemeProvider>
-      <MainContent />
+      <MainContent initialTasks={initialTasks}/>
     </ThemeProvider>
   );
 };

@@ -1,4 +1,4 @@
-import { Task } from "@/types/task";
+import { Task } from "@/types/Task";
 import { FilterType, useTheme } from "@contexts/context";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -78,10 +78,8 @@ const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
     switch (key) {
       case "light":
         setTheme("light");
-        console.log("Light");
         break;
       case "dark":
-        console.log("Dark");
         setTheme("dark");
         break;
       case "infor":

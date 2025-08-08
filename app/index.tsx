@@ -20,7 +20,7 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
   const { colors, filter } = useTheme();
   // Add state for update modal (likely near your other state declarations)
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined); // or appropriate task type
+  const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined); 
 
   const insets = useSafeAreaInsets();
   const [createModalVisible, setCreateModalVisible] = useState(false);

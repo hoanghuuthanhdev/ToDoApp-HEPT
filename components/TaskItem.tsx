@@ -34,13 +34,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const [isChecked, setIsChecked] = useState(completed);
   const [showDelete, setShowDelete] = useState(false);
   const { colors } = useTheme();
-  
 
   //animation values
   const shake = useSharedValue(0);
   const opacity = useSharedValue(1);
   const scale = useSharedValue(1);
-  const height = useSharedValue(80);
+  const height = useSharedValue(60);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: shake.value }, { scale: scale.value }],
@@ -106,10 +105,10 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
   return (
     <GestureDetector gesture={longPressGesture}>
-      <Animated.View style={[styles.container, animatedStyle]}>
-        <View style={[styles.content, { borderColor: colors.border }]}>
+      <Animated.View style={[styles.container, animatedStyle, {backgroundColor: colors.primary}]}>
+        <View style={[styles.content, { borderColor: colors.border}]}>
           <Checkbox
-            style={styles.checkbox}
+            style={[styles.checkbox,{borderColor: 'white'}]}
             value={isChecked}
             onValueChange={handleToggle}
             color={isChecked ? "#4CAF50" : undefined}
@@ -120,7 +119,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
               style={[
                 styles.title,
                 isChecked && styles.completedTitle,
-                { color: colors.text },
+                { color: colors.surface },
               ]}
               numberOfLines={1}
               ellipsizeMode="tail"
@@ -159,16 +158,14 @@ const TaskItem: React.FC<TaskItemProps> = ({
 const styles = StyleSheet.create({
   container: {
     // backgroundColor: 'white',
-    padding: 15,
-    marginHorizontal: 15,
+    // padding: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    marginHorizontal: 10,
     marginVertical: 5,
-    borderRadius: 8,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
+    borderRadius: 10,
+    // elevation: 2,
+    // borderWidth: 1,
     shadowOpacity: 0.2,
     shadowRadius: 2,
     justifyContent: "center",
@@ -181,6 +178,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
     width: 25,
     height: 25,
+    color: '#fff'
   },
   textContainer: {
     flex: 1,
@@ -199,19 +197,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#FF6B6B",
     borderRadius: 6,
-    padding: 8,
+    padding: 6,
     justifyContent: "center",
     alignItems: "center",
-    minWidth: 36,
-    minHeight: 36,
+    minWidth: 30,
+    minHeight: 30,
   },
   deleteButton: {
     backgroundColor: "#FF4444",
-    padding: 10,
+    padding: 8,
     borderRadius: 6,
     justifyContent: "center",
     alignItems: "center",
-    minWidth: 40,
+    minWidth: 36,
+    minHeight: 32,
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: {

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Win-Win Tasks",
     "slug": "ToDoApp",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/win-win.png",
     "scheme": "todoapp",

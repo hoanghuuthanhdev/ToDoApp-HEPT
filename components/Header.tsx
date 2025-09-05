@@ -2,6 +2,7 @@ import { Task } from "@/types/Task";
 import { FilterType, useTheme } from "@contexts/context";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
@@ -64,6 +65,8 @@ const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
     { key: "light", label: "Chế độ sáng", icon: "sun-o" },
     { key: "dark", label: "Chế độ tối", icon: "moon-o" },
     { key: "infor", label: "Thông tin", icon: "info-circle" },
+    { key: "trash", label: "Thùng rác", icon: "trash" },
+    { key: "onboarding", label: "Hướng dẫn", icon: "question-circle" },
   ];
 
   //Handel filter change
@@ -84,6 +87,17 @@ const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
         break;
       case "infor":
         router.push("/infor");
+        break;
+      case "trash":
+        router.push("/trash");
+        break;
+      case "onboarding":
+        AsyncStorage.removeItem("hasSeenOnboarding");
+        setTimeout(() => {
+          if (typeof window !== "undefined") {
+            window.location.reload();
+          }
+        }, 300);
         break;
       default:
         "Unknow action";
@@ -213,11 +227,7 @@ const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
                     {/* Hiển thị indicator cho theme hiện tại */}
                     {((item.key === "light" && theme === "light") ||
                       (item.key === "dark" && theme === "dark")) && (
-                      <FontAwesome
-                        name="check"
-                        size={14}
-                        color={colors.text}
-                      />
+                      <FontAwesome name="check" size={14} color={colors.text} />
                     )}
                   </TouchableOpacity>
                 ))}

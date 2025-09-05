@@ -36,7 +36,7 @@ export class StorageService {
   static async addTask(task: Task): Promise<void> {
     try {
       const tasks = await this.getTasks();
-      tasks.push(task);
+      tasks.push({ ...task, deleted: false });
       await this.saveTasks(tasks);
     } catch (error) {
       throw error;
@@ -47,7 +47,6 @@ export class StorageService {
     try {
       const tasks = await this.getTasks();
       const taskIndex = tasks.findIndex(task => task.id === taskId);
-      
       if (taskIndex !== -1) {
         tasks[taskIndex] = { ...tasks[taskIndex], ...updates };
         await this.saveTasks(tasks);
@@ -57,6 +56,46 @@ export class StorageService {
     }
   }
 
+  // mark tasks as deleted instead of permanently deleting them
+  static async softDeleteTask(taskId: string): Promise<void> {
+    try {
+      const tasks = await this.getTasks();
+      const taskIndex = tasks.findIndex(task => task.id === taskId);
+      if (taskIndex !== -1) {
+        tasks[taskIndex].deleted = true;
+        await this.saveTasks(tasks);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // get list of deleted/hiden tasks
+
+  static async getDeletedTasks(): Promise<Task[]> {
+    try {
+      const tasks = await this.getTasks();
+      return tasks.filter(task => task.deleted);
+    } catch (error) {
+      return [];
+    }
+  }
+
+  // restore deleted/hidden tasks 
+  static async restoreTask(taskId: string): Promise<void> {
+    try {
+      const tasks = await this.getTasks();
+      const taskIndex = tasks.findIndex(task => task.id === taskId);
+      if (taskIndex !== -1) {
+        tasks[taskIndex].deleted = false;
+        await this.saveTasks(tasks);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // delete task in the Storage
   static async deleteTask(taskId: string): Promise<void> {
     try {
       const tasks = await this.getTasks();

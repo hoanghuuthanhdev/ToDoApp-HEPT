@@ -11,7 +11,16 @@ import {
     View,
 } from 'react-native';
 
-const InfoHeader = () => {
+// Khai báo props cho component
+interface InfoHeaderProps {
+  title?: string;
+  icon?: keyof typeof FontAwesome.glyphMap; // icon FontAwesome
+}
+
+const InfoHeader: React.FC<InfoHeaderProps> = ({
+  title = 'Thông tin ứng dụng',
+  icon = 'info-circle',
+}) => {
   const { colors, theme, setTheme } = useTheme();
   const [showThemeMenu, setShowThemeMenu] = useState(false);
 
@@ -44,7 +53,7 @@ const InfoHeader = () => {
     <TouchableWithoutFeedback onPress={handleOutsidePress}>
       <View style={[styles.container, { backgroundColor: colors.primary }]}>
         {/* Back Button */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
@@ -53,8 +62,8 @@ const InfoHeader = () => {
 
         {/* Title Section */}
         <View style={styles.titleSection}>
-          <FontAwesome name="info-circle" size={24} color="white" />
-          <Text style={styles.title}>Thông tin ứng dụng</Text>
+          <FontAwesome name={icon} size={22} color="white" />
+          <Text style={styles.title}>{title}</Text>
         </View>
 
         {/* Theme Menu */}
@@ -62,14 +71,22 @@ const InfoHeader = () => {
           <TouchableOpacity onPress={() => setShowThemeMenu(!showThemeMenu)}>
             <Entypo name="dots-three-vertical" size={24} color="white" />
           </TouchableOpacity>
-          
+
           {showThemeMenu && (
             <View style={styles.themeMenuWrapper}>
-              <View style={[styles.themeMenu, { backgroundColor: colors.background }]}>
+              <View
+                style={[
+                  styles.themeMenu,
+                  { backgroundColor: colors.background },
+                ]}
+              >
                 {themeMenuItems.map((item, index) => (
                   <TouchableOpacity
                     key={index}
-                    style={[styles.themeMenuItem, { backgroundColor: colors.background }]}
+                    style={[
+                      styles.themeMenuItem,
+                      { backgroundColor: colors.background },
+                    ]}
                     onPress={() => handleMenuAction(item.key)}
                   >
                     <FontAwesome
@@ -78,13 +95,19 @@ const InfoHeader = () => {
                       color={colors.text}
                       style={styles.themeMenuIcon}
                     />
-                    <Text style={[styles.themeMenuText, { color: colors.text }]}>
+                    <Text
+                      style={[styles.themeMenuText, { color: colors.text }]}
+                    >
                       {item.label}
                     </Text>
                     {((item.key === 'light' && theme === 'light') ||
-                        (item.key === 'dark' && theme === 'dark')) && (
-                        <FontAwesome name="check" size={14} color={colors.primary} />
-                      )}
+                      (item.key === 'dark' && theme === 'dark')) && (
+                      <FontAwesome
+                        name="check"
+                        size={14}
+                        color={colors.primary}
+                      />
+                    )}
                   </TouchableOpacity>
                 ))}
               </View>

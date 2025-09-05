@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Win-Win Task",
+    "name": "Win-Win Tasks",
     "slug": "ToDoApp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -36,16 +36,7 @@
       "favicon": "./assets/images/win-win.png"
     },
     "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/win-win.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ]
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true

@@ -84,7 +84,7 @@ const InfoScreen = () => {
           ]}
         >
           {/* Header */}
-          <InfoHeader />
+          <InfoHeader title="Thông tin ứng dụng" icon="info-circle" />
 
           {/* Content */}
           <ScrollView

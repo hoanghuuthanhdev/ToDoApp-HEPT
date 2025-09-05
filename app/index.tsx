@@ -8,6 +8,7 @@ import TaskItem from "@components/TaskItem";
 import { ThemeProvider, useTheme } from "@contexts/context";
 import { StorageService } from "@utils/Storage";
 import React, { useCallback, useEffect, useState } from "react";
+import * as Notifications from "expo-notifications";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -15,23 +16,27 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import OnboardingSteps from "@components/OnboardingSteps";
 
 const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
   const { colors, filter } = useTheme();
   // Add state for update modal (likely near your other state declarations)
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined); 
+  const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined);
 
   const insets = useSafeAreaInsets();
   const [createModalVisible, setCreateModalVisible] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>(
+    initialTasks.filter((task) => !task.deleted)
+  );
 
   //state to receive filtered task from the header
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
 
-  useEffect(()=>{
-    setTasks(initialTasks);
-  },[initialTasks])
+  useEffect(() => {
+    setTasks(initialTasks.filter((task) => !task.deleted));
+  }, [initialTasks]);
 
   //callback to receive filtered tasks from the header
   const handleFilteredTasksChange = useCallback((filtered: Task[]) => {
@@ -42,22 +47,49 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
     //save to asynchStorage
     await StorageService.addTask(newTask);
     setTasks((prevTasks) => [...prevTasks, newTask]);
+
+    // Schedule notification 1 hour before due date
+    if (newTask.dueDate) {
+      const dueDate = new Date(newTask.dueDate);
+      const notifyDate = new Date(dueDate.getTime() - 60 * 60 * 1000); // 1 hour before
+      if (notifyDate > new Date()) {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Sắp đến hạn nhiệm vụ!",
+            body: `Nhiệm vụ "${newTask.title}" sẽ hết hạn lúc ${dueDate.toLocaleString()}`,
+            sound: true,
+            priority: Notifications.AndroidNotificationPriority.HIGH,
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date: notifyDate,
+          },
+        });
+      }
+    }
   };
 
   const handleHideTask = (id: string) => {
     const taskToHide = tasks.find((task) => task.id === id);
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-
-    if (taskToHide) {
-      Toast.show({
-        type: "info",
-        text1: "Đã ẩn nhiệm vụ",
-        text2: `"${taskToHide.title}" đã được ẩn`,
-        position: "bottom",
-        bottomOffset: 120,
-        visibilityTime: 2000,
-      });
-    }
+    // Chuyển vào thùng rác khi ẩn
+    StorageService.softDeleteTask(id);
+    setTimeout(() => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, deleted: true } : task
+        )
+      );
+      if (taskToHide) {
+        Toast.show({
+          type: "info",
+          text1: "Đã chuyển vào thùng rác!",
+          text2: `"${taskToHide.title}" đã được chuyển vào thùng rác`,
+          position: "bottom",
+          bottomOffset: 120,
+          visibilityTime: 2000,
+        });
+      }
+    }, 350); // delay để animation hoàn thành
   };
 
   const handleCreateModal = () => {
@@ -102,17 +134,18 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
 
   const handleDeleteTask = async (id: string) => {
     const taskToDelete = tasks.find((task) => task.id === id);
-
-    //delete from asyncStorage
-    await StorageService.deleteTask(id);
-
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-
+    // Chuyển sang soft delete
+    await StorageService.softDeleteTask(id);
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === id ? { ...task, deleted: true } : task
+      )
+    );
     if (taskToDelete) {
       Toast.show({
         type: "error",
-        text1: "Đã xóa!",
-        text2: `"${taskToDelete.title}" đã được xóa`,
+        text1: "Đã chuyển vào thùng rác!",
+        text2: `"${taskToDelete.title}" đã được chuyển vào thùng rác`,
         position: "bottom",
         bottomOffset: 150,
         visibilityTime: 3000,
@@ -293,11 +326,26 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [initialTasks, setInitialTasks] = useState<Task[]>([]);
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      const seen = await AsyncStorage.getItem("hasSeenOnboarding");
+      setShowOnboarding(!seen);
+    };
+    checkOnboarding();
+  }, []);
 
   const handleLoadingComplete = (loadedTasks: Task[]) => {
     setInitialTasks(loadedTasks);
     setIsLoading(false);
   };
+
+  const handleFinishOnboarding = async () => {
+    await AsyncStorage.setItem("hasSeenOnboarding", "true");
+    setShowOnboarding(false);
+  };
+
   if (isLoading) {
     return (
       <SimpleLoadingScreen
@@ -306,9 +354,14 @@ const App = () => {
       />
     );
   }
+
+  if (showOnboarding) {
+    return <OnboardingSteps onFinish={handleFinishOnboarding} />;
+  }
+
   return (
     <ThemeProvider>
-      <MainContent initialTasks={initialTasks}/>
+      <MainContent initialTasks={initialTasks} />
     </ThemeProvider>
   );
 };

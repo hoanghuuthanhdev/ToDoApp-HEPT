@@ -4,11 +4,13 @@ import Header from "@components/Header";
 import SimpleLoadingScreen from "@components/LoadingScreen";
 import CreateModel from "@components/ModalCreate";
 import UpdateModal from "@components/ModalUpdateTask";
+import OnboardingSteps from "@components/OnboardingSteps";
 import TaskItem from "@components/TaskItem";
 import { ThemeProvider, useTheme } from "@contexts/context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StorageService } from "@utils/Storage";
-import React, { useCallback, useEffect, useState } from "react";
 import * as Notifications from "expo-notifications";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
@@ -16,12 +18,9 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import OnboardingSteps from "@components/OnboardingSteps";
 
 const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
   const { colors, filter } = useTheme();
-  // Add state for update modal (likely near your other state declarations)
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined);
 
@@ -30,28 +29,31 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
   const [tasks, setTasks] = useState<Task[]>(
     initialTasks.filter((task) => !task.deleted)
   );
-
-  //state to receive filtered task from the header
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     setTasks(initialTasks.filter((task) => !task.deleted));
   }, [initialTasks]);
-
-  //callback to receive filtered tasks from the header
+  
+  // Ensure filteredTasks is updated when tasks change
+  useEffect(() => {
+    setFilteredTasks(prevFiltered => {
+      const updatedFiltered = prevFiltered.filter(task => tasks.some(t => t.id === task.id && !t.deleted));
+      return updatedFiltered;
+    });
+  }, [tasks]);
+  
   const handleFilteredTasksChange = useCallback((filtered: Task[]) => {
     setFilteredTasks(filtered);
   }, []);
 
   const handleAddNewTask = async (newTask: Task) => {
-    //save to asynchStorage
     await StorageService.addTask(newTask);
     setTasks((prevTasks) => [...prevTasks, newTask]);
 
-    // Schedule notification 1 hour before due date
     if (newTask.dueDate) {
       const dueDate = new Date(newTask.dueDate);
-      const notifyDate = new Date(dueDate.getTime() - 60 * 60 * 1000); // 1 hour before
+      const notifyDate = new Date(dueDate.getTime() - 60 * 60 * 1000);
       if (notifyDate > new Date()) {
         await Notifications.scheduleNotificationAsync({
           content: {
@@ -71,15 +73,15 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
 
   const handleHideTask = (id: string) => {
     const taskToHide = tasks.find((task) => task.id === id);
-    // Chuyển vào thùng rác khi ẩn
     StorageService.softDeleteTask(id);
-    setTimeout(() => {
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === id ? { ...task, deleted: true } : task
-        )
-      );
-      if (taskToHide) {
+    
+    // Update state immediately to prevent showing in dropdown
+    setTasks((prevTasks) =>
+      prevTasks.filter((task) => task.id !== id)
+    );
+    
+    if (taskToHide) {
+      setTimeout(() => {
         Toast.show({
           type: "info",
           text1: "Đã chuyển vào thùng rác!",
@@ -88,8 +90,8 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
           bottomOffset: 120,
           visibilityTime: 2000,
         });
-      }
-    }, 350); // delay để animation hoàn thành
+      }, 500);
+    }
   };
 
   const handleCreateModal = () => {
@@ -103,10 +105,8 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
       if (task) {
         const updatedTask = { ...task, completed: !task.completed };
 
-        // Update in AsyncStorage
         await StorageService.updateTask(id, { completed: !task.completed });
 
-        // Update local state
         setTasks((prevTasks) =>
           prevTasks.map((task) => (task.id === id ? updatedTask : task))
         );
@@ -134,13 +134,13 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
 
   const handleDeleteTask = async (id: string) => {
     const taskToDelete = tasks.find((task) => task.id === id);
-    // Chuyển sang soft delete
     await StorageService.softDeleteTask(id);
+    
+    // Update state immediately to prevent showing in dropdown
     setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, deleted: true } : task
-      )
+      prevTasks.filter((task) => task.id !== id)
     );
+    
     if (taskToDelete) {
       Toast.show({
         type: "error",
@@ -163,10 +163,8 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
 
   const handleUpdateTask = async (updatedTask: Task) => {
     try {
-      // update in AsyncStorage
       await StorageService.updateTask(updatedTask.id, updatedTask);
 
-      // update local state
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === updatedTask.id ? updatedTask : task
@@ -220,7 +218,7 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
             resizeMode="contain"
           />
           <Text style={[styles.emptyTitle, { color: colors.text }]}>
-            Chill thôi bro''''''
+            Chill thôi bro &quot; &quot;
           </Text>
           <Text style={[styles.emptySubtitle, { color: colors.text }]}>
             Nhấn nút + để tạo nhiệm vụ đầu tiên
@@ -298,6 +296,8 @@ const MainContent = ({ initialTasks }: { initialTasks: Task[] }) => {
                 filteredTasks.length === 0 && styles.emptyContentContainer,
               ]}
               showsVerticalScrollIndicator={false}
+              removeClippedSubviews={false} // Disable for better animation
+              scrollEventThrottle={16}
               ListEmptyComponent={renderEmptyComponent}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
             />
@@ -327,14 +327,35 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [initialTasks, setInitialTasks] = useState<Task[]>([]);
   const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+  const [onboardingChecked, setOnboardingChecked] = useState(false);
 
   useEffect(() => {
     const checkOnboarding = async () => {
-      const seen = await AsyncStorage.getItem("hasSeenOnboarding");
-      setShowOnboarding(!seen);
+      try {
+        const seen = await AsyncStorage.getItem("hasSeenOnboarding");
+        setShowOnboarding(!seen);
+        setOnboardingChecked(true);
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
+        setShowOnboarding(true); // Default to showing onboarding if error
+        setOnboardingChecked(true);
+      }
     };
     checkOnboarding();
   }, []);
+
+  // Add a timeout to prevent infinite loading if something goes wrong
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!onboardingChecked) {
+        console.warn('Onboarding check timeout, proceeding without onboarding');
+        setShowOnboarding(false);
+        setOnboardingChecked(true);
+      }
+    }, 5000); // 5 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [onboardingChecked]);
 
   const handleLoadingComplete = (loadedTasks: Task[]) => {
     setInitialTasks(loadedTasks);
@@ -342,11 +363,18 @@ const App = () => {
   };
 
   const handleFinishOnboarding = async () => {
-    await AsyncStorage.setItem("hasSeenOnboarding", "true");
-    setShowOnboarding(false);
+    try {
+      await AsyncStorage.setItem("hasSeenOnboarding", "true");
+      setShowOnboarding(false);
+    } catch (error) {
+      console.error("Error saving onboarding status:", error);
+      // Still hide onboarding even if save fails to prevent infinite loop
+      setShowOnboarding(false);
+    }
   };
 
-  if (isLoading) {
+  // Show loading screen while checking onboarding and loading tasks
+  if (isLoading || !onboardingChecked) {
     return (
       <SimpleLoadingScreen
         onLoadingComplete={handleLoadingComplete}

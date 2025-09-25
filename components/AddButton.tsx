@@ -16,11 +16,11 @@ interface AddButtonProps {
     onPress: () => void;
     icon?: 'plus' | 'save' | 'edit' | 'delete' | 'check' | 'cancel';
     iconLibrary?: 'FontAwesome' | 'Entypo' | 'AntDesign';
-    text?: string; // Optional text
-    backgroundColor?: string; // Custom background color
-    size?: 'small' | 'medium' | 'large'; // Size variants
-    animated?: boolean; // Enable/disable animations
-    variant?: 'primary' | 'secondary' | 'danger' | 'success'; // Style variants
+    text?: string;
+    backgroundColor?: string; 
+    size?: 'small' | 'medium' | 'large';
+    animated?: boolean; 
+    variant?: 'primary' | 'secondary' | 'danger' | 'success';
 }
 
 const AddButton: React.FC<AddButtonProps> = ({ 

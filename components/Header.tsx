@@ -19,7 +19,6 @@ interface HeaderProps {
   onFilteredTasksChange: (filteredTasks: Task[]) => void;
 }
 
-//Type-safe component
 const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
   const router = useRouter();
   const { colors, theme, setTheme, filter, setFilter } = useTheme();
@@ -48,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({ tasks, onFilteredTasksChange }) => {
         break;
       case FilterType.Exprired:
         result = tasks.filter((task) => {
-          if (!task.dueDate || !task.completed) return false;
+          if (!task.dueDate || task.completed) return false;
           const dueDate = new Date(task.dueDate);
           return dueDate < now;
         });

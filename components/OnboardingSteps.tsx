@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const steps = [
   {
-    image: require('../assets/images/win-win1.png'),
+    image: require('../assets/images/playstore-icon.png'),
     title: 'Chào mừng đến với ToDoApp Win-Win!',
     desc: 'Quản lý công việc dễ dàng, hiện đại và cá nhân hóa.'
   },
@@ -35,7 +35,32 @@ interface OnboardingStepsProps {
 
 const OnboardingSteps: React.FC<OnboardingStepsProps> = ({ onFinish }) => {
   const [step, setStep] = useState(0);
+  const [isFinishing, setIsFinishing] = useState(false);
   const isLast = step === steps.length - 1;
+
+  const handleFinish = useCallback(async () => {
+    if (isFinishing) return;
+    
+    setIsFinishing(true);
+    try {
+      await onFinish();
+    } catch (error) {
+      console.error('Error finishing onboarding:', error);
+      setIsFinishing(false);
+    }
+  }, [onFinish, isFinishing]);
+
+  const handleNextStep = useCallback(() => {
+    if (isLast) {
+      handleFinish();
+    } else {
+      setStep(prev => prev + 1);
+    }
+  }, [isLast, handleFinish]);
+
+  const handlePreviousStep = useCallback(() => {
+    setStep(prev => prev - 1);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -51,16 +76,28 @@ const OnboardingSteps: React.FC<OnboardingStepsProps> = ({ onFinish }) => {
         {step > 0 && (
           <TouchableOpacity
             style={[styles.button, styles.backButton]}
-            onPress={() => setStep(step - 1)}
+            onPress={handlePreviousStep}
+            disabled={isFinishing}
           >
             <Text style={styles.buttonText}>Quay lại</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => isLast ? onFinish() : setStep(step + 1)}
+          style={[
+            styles.button,
+            isFinishing && styles.disabledButton
+          ]}
+          onPress={handleNextStep}
+          disabled={isFinishing}
         >
-          <Text style={styles.buttonText}>{isLast ? 'Bắt đầu sử dụng' : 'Tiếp tục'}</Text>
+          <Text style={styles.buttonText}>
+            {isFinishing 
+              ? 'Đang khởi tạo...' 
+              : isLast 
+                ? 'Bắt đầu sử dụng' 
+                : 'Tiếp tục'
+            }
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -90,6 +127,7 @@ const styles = StyleSheet.create({
     width: 180,
     height: 180,
     marginBottom: 24,
+    borderRadius: 10,
   },
   title: {
     fontSize: 22,
@@ -129,6 +167,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  disabledButton: {
+    backgroundColor: '#999',
+    opacity: 0.6,
   },
 });
 

@@ -223,7 +223,7 @@ const UpdateModal = ({ modalVisible, setModalVisible, updateTask, TaskData }: IP
                                 mode="date"
                                 display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                                 onChange={onChange}
-                                minimumDate={new Date()} // Không cho chọn ngày quá khứ
+                                minimumDate={new Date()}
                             />
                         )}
                     </View>

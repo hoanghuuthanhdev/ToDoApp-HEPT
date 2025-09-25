@@ -3,6 +3,7 @@ import { ThemeProvider, useTheme } from "@contexts/context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React from "react";
 import {
+  Alert,
   Linking,
   ScrollView,
   StyleSheet,
@@ -54,16 +55,14 @@ const InfoScreen = () => {
         break;
     }
     try {
-      // Với email → kiểm tra được
       if (url.startsWith("mailto:")) {
         const supported = await Linking.canOpenURL(url);
         if (!supported) {
-          alert("Thiết bị không hỗ trợ mở email.");
+          Alert.alert("Email không được hiển thị","Thiết bị không hỗ trợ mở Email")
           return;
         }
       }
 
-      // Với URL web → không kiểm tra, mở luôn
       await Linking.openURL(url);
     } catch (error) {
       alert("Đã xảy ra lỗi khi mở liên kết.");
@@ -209,7 +208,7 @@ const InfoScreen = () => {
             {/* Copyright */}
             <View style={styles.footer}>
               <Text style={[styles.copyright, { color: colors.textSecondary }]}>
-                Thank you❤️ "No perfection, only better".
+                Thank you❤️ No perfection, only better.
               </Text>
             </View>
           </ScrollView>

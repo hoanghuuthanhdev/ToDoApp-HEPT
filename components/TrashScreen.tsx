@@ -33,7 +33,7 @@ const TrashScreen: React.FC<TrashScreenProps> = ({
       {tasks.length === 0 ? (
         <View style={styles.emptyBox}>
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-            Không hoàn thành task chứ không phải mình sạch đâu nhé 😎
+            Không hoàn thành task chứ không phải mình sạch đâu nhé 🤐
           </Text>
           <Image
             source={require('../assets/images/memeclean.jpg')}

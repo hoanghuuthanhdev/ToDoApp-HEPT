@@ -30,12 +30,10 @@ const SimpleLoadingScreen: React.FC<SimpleLoadingScreenProps> = ({
       const startTime = Date.now();
 
       try {
-        // Load tasks from AsyncStorage
         const tasks = await StorageService.getTasks();
         setLoadedTasks(tasks);
         setIsDataLoaded(true);
 
-        //ensure the loading screen is displayed for at least the minimum duration
         const elapsedTime = Date.now() - startTime;
         const remainingTime = Math.max(500, duration - elapsedTime); 
 
@@ -45,7 +43,8 @@ const SimpleLoadingScreen: React.FC<SimpleLoadingScreenProps> = ({
           }
         }, remainingTime);
       } catch (error) {
-
+        console.error('Error loading tasks:', error);
+        setIsDataLoaded(true);
         setTimeout(() => {
           if (onLoadingComplete) {
             onLoadingComplete([]);
@@ -60,9 +59,14 @@ const SimpleLoadingScreen: React.FC<SimpleLoadingScreenProps> = ({
   return (
     <View style={styles.container}>
       <FontAwesome name="check-square-o" size={60} color="white" />
-      {!isDataLoaded && (
-        <FontAwesome name="check-square-o" size={60} color="white" />
-      )}
+      <Text style={styles.loadingText}>
+        {isDataLoaded ? `Đã tải ${loadedTasks.length} nhiệm vụ` : 'Đang khởi tạo...'}
+      </Text>
+      <ActivityIndicator 
+        size="large" 
+        color="white" 
+        style={{ marginTop: 16 }} 
+      />
     </View>
   );
 };

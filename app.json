@@ -4,7 +4,7 @@
     "slug": "ToDoApp",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/win-win.png",
+    "icon": "./assets/images/playstore-icon.png",
     "scheme": "todoapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -22,10 +22,10 @@
     },
     "android": {
       "package": "com.winwin.task",
-      "versionCode": 1,
+      "versionCode": 7,
       "permissions": [],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/win-win.png",
+        "foregroundImage": "./assets/images/playstoreforegroundImage.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
@@ -33,7 +33,7 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/win-win.png"
+      "favicon": "./assets/images/playstore-icon.png"
     },
     "plugins": [
       "expo-router"

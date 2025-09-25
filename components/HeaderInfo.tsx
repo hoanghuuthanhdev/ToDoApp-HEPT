@@ -11,10 +11,9 @@ import {
     View,
 } from 'react-native';
 
-// Khai báo props cho component
 interface InfoHeaderProps {
   title?: string;
-  icon?: keyof typeof FontAwesome.glyphMap; // icon FontAwesome
+  icon?: keyof typeof FontAwesome.glyphMap;
 }
 
 const InfoHeader: React.FC<InfoHeaderProps> = ({

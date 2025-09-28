@@ -2,7 +2,7 @@
   "expo": {
     "name": "Win-Win Tasks",
     "slug": "ToDoApp",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/playstore-icon.png",
     "scheme": "todoapp",
@@ -22,7 +22,7 @@
     },
     "android": {
       "package": "com.winwin.task",
-      "versionCode": 7,
+      "versionCode": 8,
       "permissions": [],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/playstoreforegroundImage.png",
